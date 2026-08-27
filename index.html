@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GetUpDeals – 1-in-a-Billion Deals by Shivam Singh</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ===== RESET & BASE ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a0a2e;
+            --neon-orange: #FF6B00;
+            --neon-teal: #00E5FF;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.10);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.70);
+            --text-muted: rgba(255, 255, 255, 0.40);
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --shadow-glow: 0 8px 40px rgba(255, 107, 0, 0.15);
+            --transition: 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            --font: 'Space Grotesk', sans-serif;
+            --nav-blur: 20px;
+            --radius: 18px;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f0f0;
+            --bg-secondary: #e8e0f0;
+            --text-primary: #1a1a1a;
+            --text-secondary: rgba(0, 0, 0, 0.70);
+            --text-muted: rgba(0, 0, 0, 0.40);
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --card-bg: rgba(255, 255, 255, 0.50);
+            --shadow-glow: 0 8px 40px rgba(255, 107, 0, 0.10);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.5s ease, color 0.4s ease;
+            line-height: 1.6;
+        }
+
+        /* ===== PARTICLE CANVAS ===== */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-orange);
+            border-radius: 12px;
+        }
+
+        /* ===== GLASS MIXIN ===== */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--nav-blur));
+            -webkit-backdrop-filter: blur(var(--nav-blur));
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--nav-blur));
+            -webkit-backdrop-filter: blur(var(--nav-blur));
+            border-bottom: 1px solid var(--glass-border);
+            transition: background 0.4s ease, border-color 0.4s ease;
+        }
+
+        .navbar .logo {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .navbar .logo .bolt {
+            color: var(--neon-orange);
+        }
+        .navbar .logo span {
+            background: linear-gradient(135deg, var(--neon-orange), var(--neon-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .navbar .right-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar .byline {
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            letter-spacing: 0.3px;
+        }
+        .navbar .byline i {
+            color: var(--neon-teal);
+            margin-right: 4px;
+        }
+
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(8px);
+        }
+        .theme-toggle:hover {
+            background: var(--neon-orange);
+            color: #fff;
+            transform: rotate(20deg);
+            border-color: var(--neon-orange);
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+        }
+
+        .hero .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            padding: 6px 18px 6px 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .hero .badge i {
+            color: var(--neon-teal);
+            font-size: 0.7rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.6rem, 10vw, 5.8rem);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            max-width: 900px;
+            margin-bottom: 20px;
+        }
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, var(--neon-orange), var(--neon-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtext {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 36px;
+            font-weight: 400;
+            letter-spacing: 0.2px;
+        }
+        .hero .subtext strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .hero .cta-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 20px 30px;
+        }
+
+        .btn-primary {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 44px;
+            background: linear-gradient(135deg, var(--neon-orange), #e85d00);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.05rem;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 0 30px rgba(255, 107, 0, 0.25);
+            letter-spacing: 0.3px;
+            overflow: hidden;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 60px rgba(255, 107, 0, 0.45);
+        }
+        .btn-primary:active {
+            transform: scale(0.96);
+        }
+        /* glow pulse */
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 60px;
+            background: linear-gradient(135deg, var(--neon-orange), var(--neon-teal));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            filter: blur(16px);
+        }
+        .btn-primary:hover::after {
+            opacity: 1;
+            animation: pulse-glow 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.9;
+                transform: scale(1.06);
+            }
+        }
+
+        .hero .live-counter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 400;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 60px;
+            padding: 10px 24px;
+        }
+        .hero .live-counter i {
+            color: #ff3b3b;
+            font-size: 0.7rem;
+            animation: pulse-dot 1.2s ease-in-out infinite;
+        }
+        .hero .live-counter .count {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+            min-width: 40px;
+            display: inline-block;
+        }
+
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(0.6);
+            }
+        }
+
+        /* ===== DEALS SECTION ===== */
+        .deals-section {
+            position: relative;
+            z-index: 1;
+            padding: 60px 24px 80px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .deals-section .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .deals-section .section-header h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+        .deals-section .section-header h2 span {
+            background: linear-gradient(135deg, var(--neon-orange), var(--neon-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .deals-section .section-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+
+        .deals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        /* ===== DEAL CARD ===== */
+        .deal-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 20px 20px 26px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-glow);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            perspective: 800px;
+            will-change: transform;
+            display: flex;
+            flex-direction: column;
+        }
+        .deal-card:hover {
+            border-color: rgba(255, 107, 0, 0.25);
+            box-shadow: 0 12px 60px rgba(255, 107, 0, 0.12);
+        }
+
+        .deal-card .card-image {
+            width: 100%;
+            aspect-ratio: 16/10;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+        .deal-card .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: var(--transition);
+        }
+        .deal-card:hover .card-image img {
+            transform: scale(1.03);
+        }
+
+        .deal-card .card-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(255, 107, 0, 0.85);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 60px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .deal-card .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .deal-card .card-prices {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 6px 0 10px;
+        }
+        .deal-card .original-price {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            font-size: 0.9rem;
+        }
+        .deal-card .discounted-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--neon-orange);
+        }
+        .deal-card .discounted-price .currency {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .deal-card .star-rating {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            margin: 4px 0 12px;
+            color: #fbbf24;
+            font-size: 0.85rem;
+        }
+        .deal-card .star-rating .star-empty {
+            color: var(--text-muted);
+            opacity: 0.3;
+        }
+        .deal-card .star-rating .count {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            margin-left: 6px;
+            font-weight: 400;
+        }
+
+        .deal-card .countdown {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin: 8px 0 16px;
+            padding: 8px 14px;
+            background: rgba(0, 229, 255, 0.06);
+            border-radius: 40px;
+            border: 1px solid rgba(0, 229, 255, 0.08);
+            width: fit-content;
+        }
+        .deal-card .countdown i {
+            color: var(--neon-teal);
+            font-size: 0.75rem;
+        }
+        .deal-card .countdown .timer {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.5px;
+        }
+
+        .deal-card .btn-grab {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--neon-orange), #e85d00);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: auto;
+            width: 100%;
+            letter-spacing: 0.3px;
+            position: relative;
+            overflow: hidden;
+        }
+        .deal-card .btn-grab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 107, 0, 0.30);
+        }
+        .deal-card .btn-grab:active {
+            transform: scale(0.96);
+        }
+
+        /* ===== TRUST MARQUEE ===== */
+        .trust-section {
+            position: relative;
+            z-index: 1;
+            padding: 40px 0;
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+        }
+
+        .trust-marquee {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            animation: scroll-marquee 28s linear infinite;
+            width: max-content;
+            padding: 0 30px;
+        }
+        .trust-marquee .item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            white-space: nowrap;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .trust-marquee .item i {
+            font-size: 1.8rem;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .trust-marquee .item:hover i {
+            color: var(--neon-teal);
+        }
+        .trust-marquee .item .heart {
+            color: #ff3b3b;
+        }
+
+        @keyframes scroll-marquee {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .trust-wrapper {
+            display: flex;
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+        }
+
+        /* ===== CURATOR ===== */
+        .curator-section {
+            position: relative;
+            z-index: 1;
+            padding: 70px 24px 80px;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .curator-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 40px 36px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .curator-card .avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-orange), var(--neon-teal));
+            padding: 3px;
+            flex-shrink: 0;
+        }
+        .curator-card .avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--bg-primary);
+            display: block;
+        }
+
+        .curator-card .curator-info h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .curator-card .curator-info .title {
+            color: var(--neon-teal);
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        .curator-card .curator-info p {
+            color: var(--text-secondary);
+            max-width: 520px;
+            margin: 0 auto;
+            font-size: 0.95rem;
+        }
+        .curator-card .curator-info .highlight {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* ===== CHATBOT FLOATING ===== */
+        .chatbot-float {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .chatbot-float .tooltip {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 8px 18px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateY(8px) scale(0.95);
+            transition: var(--transition);
+            pointer-events: none;
+            font-weight: 500;
+        }
+        .chatbot-float:hover .tooltip {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .chatbot-float .bot-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-orange), var(--neon-teal));
+            border: none;
+            color: #fff;
+            font-size: 1.7rem;
+            cursor: pointer;
+            box-shadow: 0 8px 40px rgba(255, 107, 0, 0.30);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float-bot 3s ease-in-out infinite;
+        }
+        .chatbot-float .bot-btn:hover {
+            transform: scale(1.10) rotate(-8deg);
+            box-shadow: 0 12px 60px rgba(255, 107, 0, 0.50);
+        }
+
+        @keyframes float-bot {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--glass-border);
+            padding: 40px 24px 32px;
+            text-align: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+        }
+        .footer .tagline {
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+        .footer .tagline span {
+            background: linear-gradient(135deg, var(--neon-orange), var(--neon-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .footer .copy {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+        .footer .copy i {
+            color: var(--neon-teal);
+            margin: 0 4px;
+        }
+
+        /* ===== RIPPLE ===== */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.30);
+            transform: scale(0);
+            animation: ripple-anim 0.65s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes ripple-anim {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* ===== SCROLL FADE ===== */
+        .fade-section {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .fade-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 12px 18px;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .navbar .logo {
+                font-size: 1.1rem;
+            }
+            .navbar .byline {
+                font-size: 0.7rem;
+            }
+            .theme-toggle {
+                width: 34px;
+                height: 34px;
+                font-size: 0.9rem;
+            }
+            .hero {
+                padding: 100px 18px 60px;
+            }
+            .hero h1 {
+                letter-spacing: -1px;
+            }
+            .hero .cta-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            .hero .live-counter {
+                width: 100%;
+                justify-content: center;
+            }
+            .btn-primary {
+                width: 100%;
+                justify-content: center;
+                padding: 14px 28px;
+            }
+            .deals-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .deal-card {
+                padding: 16px 16px 22px;
+            }
+            .curator-card {
+                padding: 28px 20px;
+            }
+            .curator-card .curator-info h3 {
+                font-size: 1.3rem;
+            }
+            .trust-marquee {
+                gap: 30px;
+                animation-duration: 20s;
+            }
+            .trust-marquee .item {
+                font-size: 0.8rem;
+            }
+            .trust-marquee .item i {
+                font-size: 1.4rem;
+            }
+            .chatbot-float .bot-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.4rem;
+            }
+            .footer .tagline {
+                font-size: 1.05rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar .byline {
+                display: none;
+            }
+            .navbar .right-group {
+                gap: 10px;
+            }
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .deal-card .discounted-price {
+                font-size: 1.3rem;
+            }
+            .deal-card .card-title {
+                font-size: 1rem;
+            }
+        }
+
+        /* ===== UTILITY ===== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== PARTICLE CANVAS ===== -->
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+    <!-- ===== NAVBAR ===== -->
+    <header class="navbar" role="banner">
+        <a href="#" class="logo" aria-label="GetUpDeals Home">
+            <span class="bolt">⚡</span>
+            <span>GetUpDeals</span>
+        </a>
+        <div class="right-group">
+            <span class="byline">
+                <i class="fas fa-crown"></i> By Shivam Singh
+            </span>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+                <i class="fas fa-moon" id="themeIcon"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <main>
+        <section class="hero" id="hero">
+            <div class="badge">
+                <i class="fas fa-bolt"></i> Live · 1-in-a-Billion Drops
+            </div>
+            <h1>
+                Wake Up to<br />
+                <span class="gradient-text">1-in-a-Billion Deals</span>
+            </h1>
+            <p class="subtext">
+                Curated by <strong>Shivam Singh</strong> – AI-scouted steals you won't find anywhere else.
+            </p>
+            <div class="cta-group">
+                <a href="#deals" class="btn-primary" id="exploreBtn">
+                    <i class="fas fa-rocket"></i> Explore Deals
+                </a>
+                <div class="live-counter">
+                    <i class="fas fa-circle"></i>
+                    <span><span class="count" id="liveCount">127</span> people viewing now</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== DEALS ===== -->
+        <section class="deals-section fade-section" id="deals">
+            <div class="section-header">
+                <h2>🔥 <span>Live Drops</span> 🔥</h2>
+                <p>Hand-picked, AI-verified, gone in hours.</p>
+            </div>
+            <div class="deals-grid" id="dealsGrid">
+                <!-- Card 1 -->
+                <article class="deal-card" data-tilt data-id="1">
+                    <div class="card-image">
+                        <img src="https://picsum.photos/seed/deal1/600/400" alt="Wireless Noise-Canceling Headphones" loading="lazy" />
+                        <span class="card-badge">🔥 Hot</span>
+                    </div>
+                    <h3 class="card-title">AuraSound Pro Wireless Headphones</h3>
+                    <div class="card-prices">
+                        <span class="original-price">$249.99</span>
+                        <span class="discounted-price"><span class="currency">$</span>129.99</span>
+                    </div>
+                    <div class="star-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                        <span class="count">(4.7k)</span>
+                    </div>
+                    <div class="countdown">
+                        <i class="fas fa-clock"></i>
+                        <span>Ends in</span>
+                        <span class="timer" data-end="02:15:30">02:15:30</span>
+                    </div>
+                    <button class="btn-grab grab-btn" data-product="AuraSound Pro">
+                        <i class="fas fa-bolt"></i> Grab Deal
+                    </button>
+                </article>
+
+                <!-- Card 2 -->
+                <article class="deal-card" data-tilt data-id="2">
+                    <div class="card-image">
+                        <img src="https://picsum.photos/seed/deal2/600/400" alt="Smart Fitness Band with Heart Rate Monitor" loading="lazy" />
+                        <span class="card-badge">⭐ Bestseller</span>
+                    </div>
+                    <h3 class="card-title">PulseFit Smart Band 6</h3>
+                    <div class="card-prices">
+                        <span class="original-price">$89.99</span>
+                        <span class="discounted-price"><span class="currency">$</span>39.99</span>
+                    </div>
+                    <div class="star-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <span class="count">(8.2k)</span>
+                    </div>
+                    <div class="countdown">
+                        <i class="fas fa-clock"></i>
+                        <span>Ends in</span>
+                        <span class="timer" data-end="01:45:20">01:45:20</span>
+                    </div>
+                    <button class="btn-grab grab-btn" data-product="PulseFit Band">
+                        <i class="fas fa-bolt"></i> Grab Deal
+                    </button>
+                </article>
+
+                <!-- Card 3 -->
+                <article class="deal-card" data-tilt data-id="3">
+                    <div class="card-image">
+                        <img src="https://picsum.photos/seed/deal3/600/400" alt="Portable Bluetooth Speaker Waterproof" loading="lazy" />
+                        <span class="card-badge">🎵 Limited</span>
+                    </div>
+                    <h3 class="card-title">BassDrop Mini Portable Speaker</h3>
+                    <div class="card-prices">
+                        <span class="original-price">$59.99</span>
+                        <span class="discounted-price"><span class="currency">$</span>29.99</span>
+                    </div>
+                    <div class="star-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-empty star-empty"></i>
+                        <span class="count">(3.9k)</span>
+                    </div>
+                    <div class="countdown">
+                        <i class="fas fa-clock"></i>
+                        <span>Ends in</span>
+                        <span class="timer" data-end="03:30:00">03:30:00</span>
+                    </div>
+                    <button class="btn-grab grab-btn" data-product="BassDrop Speaker">
+                        <i class="fas fa-bolt"></i> Grab Deal
+                    </button>
+                </article>
+            </div>
+        </section>
+
+        <!-- ===== TRUST MARQUEE ===== -->
+        <section class="trust-section" aria-label="Trust badges">
+            <div class="trust-wrapper">
+                <div class="trust-marquee" id="trustMarquee">
+                    <span class="item"><i class="fas fa-heart heart"></i> Trusted by 50,000+ Shoppers</span>
+                    <span class="item"><i class="fab fa-apple"></i> Apple</span>
+                    <span class="item"><i class="fab fa-amazon"></i> Amazon</span>
+                    <span class="item"><i class="fab fa-nike"></i> Nike</span>
+                    <span class="item"><i class="fab fa-spotify"></i> Spotify</span>
+                    <span class="item"><i class="fab fa-samsung"></i> Samsung</span>
+                    <span class="item"><i class="fas fa-star" style="color:#fbbf24;"></i> 4.9/5 Avg. Rating</span>
+                    <!-- duplicate for seamless loop -->
+                    <span class="item"><i class="fas fa-heart heart"></i> Trusted by 50,000+ Shoppers</span>
+                    <span class="item"><i class="fab fa-apple"></i> Apple</span>
+                    <span class="item"><i class="fab fa-amazon"></i> Amazon</span>
+                    <span class="item"><i class="fab fa-nike"></i> Nike</span>
+                    <span class="item"><i class="fab fa-spotify"></i> Spotify</span>
+                    <span class="item"><i class="fab fa-samsung"></i> Samsung</span>
+                    <span class="item"><i class="fas fa-star" style="color:#fbbf24;"></i> 4.9/5 Avg. Rating</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== CURATOR ===== -->
+        <section class="curator-section fade-section">
+            <div class="curator-card">
+                <div class="avatar">
+                    <img src="https://ui-avatars.com/api/?name=Shivam+Singh&background=FF6B00&color=fff&size=128&font-size=0.5&bold=true" alt="Avatar of Shivam Singh, Digital Deal Architect" />
+                </div>
+                <div class="curator-info">
+                    <span class="title"><i class="fas fa-crown" style="color:var(--neon-orange);"></i> Digital Deal Architect</span>
+                    <h3>Shivam Singh</h3>
+                    <p>
+                        <span class="highlight">AI-scouted, human-curated.</span> Shivam has been hunting the
+                        web's most insane deals for over 6 years. Every product you see is hand-tested,
+                        price-verified, and backed by a community of <span class="highlight">50,000+ smart shoppers</span>.
+                        No fluff. Just 1-in-a-billion value.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer" role="contentinfo">
+        <div class="tagline">
+            Don't just shop. <span>GetUp. GetDeals. Get Ahead.</span>
+        </div>
+        <p class="copy">
+            <i class="fas fa-bolt" style="color:var(--neon-orange);"></i>
+            &copy; 2026 GetUpDeals – Curated by Shivam Singh
+            <i class="fas fa-crown" style="color:var(--neon-teal);"></i>
+        </p>
+    </footer>
+
+    <!-- ===== CHATBOT FLOATING ===== -->
+    <div class="chatbot-float" id="chatbotFloat" role="button" tabindex="0" aria-label="DealGenie chat assistant">
+        <span class="tooltip"><i class="fas fa-magic"></i> Ask DealGenie</span>
+        <button class="bot-btn" aria-label="Open DealGenie chat">
+            <i class="fas fa-robot"></i>
+        </button>
+    </div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            // 1. PARTICLE STARS (Canvas)
+            // ============================================================
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+            let w, h;
+
+            function resizeCanvas() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            const NUM_STARS = 140;
+            for (let i = 0; i < NUM_STARS; i++) {
+                stars.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: Math.random() * 1.8 + 0.4,
+                    dx: (Math.random() - 0.5) * 0.25,
+                    dy: (Math.random() - 0.5) * 0.25,
+                    opacity: Math.random() * 0.7 + 0.2,
+                });
+            }
+
+            function drawStars() {
+                ctx.clearRect(0, 0, w, h);
+                for (const s of stars) {
+                    s.x += s.dx;
+                    s.y += s.dy;
+                    if (s.x < 0) s.x = w;
+                    if (s.x > w) s.x = 0;
+                    if (s.y < 0) s.y = h;
+                    if (s.y > h) s.y = 0;
+
+                    const alpha = s.opacity * (0.8 + 0.2 * Math.sin(Date.now() / 2000 + s.x));
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+                    ctx.fill();
+
+                    // occasional teal/orange tint on some
+                    if (s.r > 1.4) {
+                        const tint = Math.sin(Date.now() / 3000 + s.y) * 0.2 + 0.3;
+                        ctx.shadowColor = `rgba(0,229,255,${tint * 0.2})`;
+                        ctx.shadowBlur = 6;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                }
+                requestAnimationFrame(drawStars);
+            }
+            drawStars();
+
+            // ============================================================
+            // 2. THEME TOGGLE
+            // ============================================================
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            let darkMode = true;
+
+            themeToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                darkMode = !darkMode;
+                document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+                themeIcon.className = darkMode ? 'fas fa-moon' : 'fas fa-sun';
+                // update canvas background hint
+                document.body.style.transition = 'background 0.5s ease';
+            });
+
+            // ============================================================
+            // 3. LIVE COUNTER
+            // ============================================================
+            const liveCountEl = document.getElementById('liveCount');
+            let count = 127;
+
+            function updateCounter() {
+                const delta = Math.floor(Math.random() * 12) + 3;
+                count += delta;
+                liveCountEl.textContent = count;
+            }
+            setInterval(updateCounter, 3000);
+
+            // ============================================================
+            // 4. COUNTDOWN TIMERS
+            // ============================================================
+            const timers = document.querySelectorAll('.timer');
+
+            function parseTime(str) {
+                const parts = str.split(':').map(Number);
+                if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+                return 0;
+            }
+
+            function formatTime(seconds) {
+                const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+                const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+                const s = String(seconds % 60).padStart(2, '0');
+                return `${h}:${m}:${s}`;
+            }
+
+            timers.forEach(el => {
+                const endStr = el.getAttribute('data-end') || '00:00:00';
+                let remaining = parseTime(endStr);
+                el.textContent = formatTime(remaining);
+
+                setInterval(() => {
+                    if (remaining > 0) {
+                        remaining--;
+                        el.textContent = formatTime(remaining);
+                    } else {
+                        el.textContent = '00:00:00';
+                    }
+                }, 1000);
+            });
+
+            // ============================================================
+            // 5. 3D TILT ON CARDS (mousemove)
+            // ============================================================
+            const tiltCards = document.querySelectorAll('[data-tilt]');
+
+            tiltCards.forEach(card => {
+                card.addEventListener('mousemove', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -8;
+                    const rotateY = ((x - centerX) / centerX) * 8;
+                    this.style.transform =
+                        `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`;
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform =
+                    'perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
+                    this.style.transition = 'transform 0.4s ease';
+                    setTimeout(() => { this.style.transition = ''; }, 400);
+                });
+            });
+
+            // ============================================================
+            // 6. RIPPLE EFFECT ON BUTTONS
+            // ============================================================
+            document.querySelectorAll('.btn-primary, .btn-grab, .theme-toggle, .bot-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const ripple = document.createElement('span');
+                    ripple.className = 'ripple';
+                    const size = Math.min(rect.width, rect.height) * 0.8;
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = (x - size / 2) + 'px';
+                    ripple.style.top = (y - size / 2) + 'px';
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+                    setTimeout(() => ripple.remove(), 700);
+                });
+            });
+
+            // ============================================================
+            // 7. SCROLL-TRIGGERED FADE (Intersection Observer)
+            // ============================================================
+            const fadeEls = document.querySelectorAll('.fade-section');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+
+            fadeEls.forEach(el => observer.observe(el));
+
+            // Also observe deal cards individually for staggered feel
+            const cards = document.querySelectorAll('.deal-card');
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, idx) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, idx * 120);
+                    }
+                });
+            }, { threshold: 0.10 });
+
+            cards.forEach((card, i) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(40px)';
+                card.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+                cardObserver.observe(card);
+            });
+
+            // ============================================================
+            // 8. GRAB DEAL BUTTON FEEDBACK
+            // ============================================================
+            document.querySelectorAll('.grab-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const product = this.getAttribute('data-product') || 'this deal';
+                    const orig = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i> Claimed!';
+                    this.style.background = 'linear-gradient(135deg, #00b894, #00a381)';
+                    this.disabled = true;
+                    setTimeout(() => {
+                        this.innerHTML = orig;
+                        this.style.background = '';
+                        this.disabled = false;
+                        alert(`🎉 You grabbed "${product}"! Head to checkout.`);
+                    }, 1800);
+                });
+            });
+
+            // ============================================================
+            // 9. CHATBOT TOOLTIP + CLICK
+            // ============================================================
+            const botBtn = document.querySelector('.bot-btn');
+            botBtn.addEventListener('click', function() {
+                alert('🤖 DealGenie: Hey there! I\'ll fetch the freshest 1-in-a-billion deals for you. Stay tuned!');
+            });
+
+            // ============================================================
+            // 10. SMOOTH SCROLL FOR "Explore Deals"
+            // ============================================================
+            document.getElementById('exploreBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.getElementById('deals');
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+
+            // ============================================================
+            // 11. RESPONSIVE MARQUEE PAUSE ON HOVER (optional)
+            // ============================================================
+            const trustWrapper = document.querySelector('.trust-wrapper');
+            const marquee = document.getElementById('trustMarquee');
+
+            trustWrapper.addEventListener('mouseenter', () => {
+                marquee.style.animationPlayState = 'paused';
+            });
+            trustWrapper.addEventListener('mouseleave', () => {
+                marquee.style.animationPlayState = 'running';
+            });
+
+            console.log('🚀 GetUpDeals — 1-in-a-Billion experience loaded.');
+        })();
+    </script>
+
+</body>
+</html>
