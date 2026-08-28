@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You're Offline – GetUpDeals</title>
+    <meta name="description" content="You are currently offline. Check your connection and try again.">
+    <link rel="icon" type="image/x-icon" href="./assets/images/logo/favicon-set/favicon.ico">
+    <style>
+        /* Critical inline styles – same design language as main site */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --radius-lg: 1rem;
+            --radius-full: 9999px;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-sans);
+            background: var(--gray-50);
+            color: var(--gray-700);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .offline-card {
+            max-width: 500px;
+            width: 100%;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem 2rem;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        .brand {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+        }
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.75rem;
+        }
+        p {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .retry-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+        .retry-btn:hover {
+            background: var(--primary-dark);
+        }
+        .cached-links {
+            border-top: 1px solid var(--gray-100);
+            padding-top: 1.5rem;
+        }
+        .cached-links p {
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+        .link-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+        .link-grid a {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .link-grid a:hover {
+            background: var(--primary);
+            color: white;
+        }
+        footer {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+    </style>
+    <!-- Fallback fonts (optional) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="offline-card">
+        <div class="brand">GetUpDeals</div>
+        <div class="icon">📶</div>
+        <h1>You're offline</h1>
+        <p>It seems you've lost your internet connection. Don't worry, you can still visit some pages we've saved for you.</p>
+        
+        <button class="retry-btn" id="retryButton">
+            <span>🔄</span> Try Again
+        </button>
+
+        <div class="cached-links">
+            <p>You might still have access to:</p>
+            <div class="link-grid">
+                <a href="./index.html">🏠 Home</a>
+                <a href="./deals/index.html">🏷️ Deals</a>
+                <a href="./blog/index.html">📚 Blog</a>
+                <a href="./categories/all-categories/index.html">📂 Categories</a>
+            </div>
+        </div>
+    </div>
+    <footer>
+        &copy; 2024 GetUpDeals – saved for offline browsing
+    </footer>
+
+    <script>
+        document.getElementById('retryButton').addEventListener('click', () => {
+            window.location.reload();
+        });
+
+        // Optional: check if online and redirect to home
+        window.addEventListener('online', () => {
+            window.location.href = './index.html';
+        });
+    </script>
+</body>
+</html>

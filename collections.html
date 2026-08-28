@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deals Collection | GetUpDeals</title>
+    <meta name="description" content="Shop curated deals – filter by price, discount, store, and more. Find the best offers from top e-commerce stores.">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Deals Collection | GetUpDeals">
+    <meta property="og:description" content="Filter and find the best deals from Amazon, Flipkart, Myntra and more.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://getupdeals.com/collections.html">
+    
+    <!-- PWA -->
+    <meta name="theme-color" content="#2563eb">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="./assets/images/logo/favicon-set/favicon.ico">
+    <link rel="apple-touch-icon" href="./assets/images/logo/favicon-set/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="./assets/css/critical.css">
+    <link rel="stylesheet" href="./assets/css/main.css">
+    <link rel="stylesheet" href="./assets/css/components.css">
+    <link rel="stylesheet" href="./assets/css/themes.css">
+    <link rel="stylesheet" href="./assets/css/responsisve.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Additional styles for filters and grid */
+        .collections-main {
+            display: flex;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        .filters-sidebar {
+            flex: 1;
+            min-width: 260px;
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        .products-area {
+            flex: 3;
+            min-width: 280px;
+        }
+        .filter-group {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1rem;
+        }
+        .filter-group h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+        .filter-option input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .filter-option label {
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .filter-chip {
+            background: #e5e7eb;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .filter-chip .remove {
+            cursor: pointer;
+            font-weight: bold;
+            color: #ef4444;
+        }
+        .clear-filters {
+            background: none;
+            border: none;
+            color: #2563eb;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .sort-select {
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            background: white;
+        }
+        .deals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+        .deal-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .deal-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .deal-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .deal-content {
+            padding: 1rem;
+        }
+        .deal-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .price {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+        .original-price {
+            text-decoration: line-through;
+            color: #9ca3af;
+            font-size: 0.85rem;
+        }
+        .final-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+        .discount-badge {
+            background: #ef4444;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .store-badge {
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        .view-deal-btn {
+            display: inline-block;
+            margin-top: 0.75rem;
+            background: #2563eb;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            width: 100%;
+            text-align: center;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: #f9fafb;
+            border-radius: 1rem;
+        }
+        @media (max-width: 768px) {
+            .filters-sidebar {
+                position: static;
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            .collections-main {
+                flex-direction: column;
+            }
+        }
+        .browse-all-collections {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        .collection-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+        .collection-links-grid a {
+            color: #374151;
+            text-decoration: none;
+            padding: 0.5rem 0;
+            display: block;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .collection-links-grid a:hover {
+            color: #ff6523;
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to Content -->
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <span class="deal-alert"><i class="fas fa-bolt"></i> Flash Sale: 50% OFF on Fashion – Ends Tonight!</span>
+                <div class="top-bar-links">
+                    <a href="./pages/about/index.html">About</a>
+                    <a href="./pages/contact/index.html">Contact</a>
+                    <a href="./blog/index.html">Blog</a>
+                    <a href="./pages/affiliate-disclosure/index.html" class="affiliate-badge">Affiliate</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Header -->
+    <header class="main-header" role="banner">
+        <div class="container">
+            <div class="logo-container">
+                <a href="./index.html" class="logo"><span class="brand-name">GetUpDeals</span></a>
+            </div>
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="./index.html" class="nav-link">Home</a></li>
+                    <li class="nav-dropdown">
+                        <a href="./collections.html" class="nav-link active">Collections <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="./collections.html?cat=fashion" class="dropdown-item"><i class="fas fa-tshirt"></i> Fashion</a>
+                            <a href="./collections.html?cat=electronics" class="dropdown-item"><i class="fas fa-laptop"></i> Electronics</a>
+                            <a href="./collections.html?cat=gadgets" class="dropdown-item"><i class="fas fa-mobile-alt"></i> Gadgets</a>
+                            <a href="./collections.html?cat=home-appliances" class="dropdown-item"><i class="fas fa-blender"></i> Home Appliances</a>
+                            <a href="./collections.html" class="dropdown-item view-all"><i class="fas fa-th"></i> View All Collections</a>
+                        </div>
+                    </li>
+                    <li><a href="./deals/index.html" class="nav-link">Today's Deals</a></li>
+                    <li><a href="./blog/index.html" class="nav-link">Blog</a></li>
+                    <li><a href="./pages/contact/index.html" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="account-btn" id="accountBtn"><i class="fas fa-user-circle"></i><span>Sign In</span></button>
+                <div class="search-container" role="search">
+                    <form class="search-form" action="./api/deals/search.php" method="get">
+                        <input type="search" name="q" placeholder="Search for deals..." class="search-input">
+                        <button type="button" class="search-btn"><i class="fas fa-search"></i></button>
+                    </form>
+                </div>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation (same as homepage) -->
+    <div class="mobile-nav" id="mobileNav" hidden>
+        <div class="mobile-nav-header">
+            <a href="./index.html" class="mobile-logo"><span class="brand-name">GetUpDeals</span></a>
+            <button class="mobile-nav-close" id="mobileNavClose"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="mobileAccountContainer" class="mobile-account-panel"></div>
+        <nav class="mobile-nav-menu">
+            <a href="./index.html" class="mobile-nav-link"><i class="fas fa-home"></i> Home</a>
+            <div class="mobile-nav-dropdown">
+                <button class="mobile-nav-link">Collections <i class="fas fa-chevron-down"></i></button>
+                <div class="mobile-dropdown-menu">
+                    <a href="./collections.html?cat=fashion"><i class="fas fa-tshirt"></i> Fashion</a>
+                    <a href="./collections.html?cat=electronics"><i class="fas fa-laptop"></i> Electronics</a>
+                    <a href="./collections.html?cat=gadgets"><i class="fas fa-mobile-alt"></i> Gadgets</a>
+                    <a href="./collections.html?cat=home-appliances"><i class="fas fa-blender"></i> Home Appliances</a>
+                    <a href="./collections.html"><i class="fas fa-eye"></i> View All Collections</a>
+                </div>
+            </div>
+            <a href="./deals/index.html" class="mobile-nav-link"><i class="fas fa-tag"></i> Today's Deals</a>
+            <a href="./blog/index.html" class="mobile-nav-link"><i class="fas fa-blog"></i> Blog</a>
+            <a href="./pages/contact/index.html" class="mobile-nav-link"><i class="fas fa-envelope"></i> Contact</a>
+            <a href="./pages/about/index.html" class="mobile-nav-link"><i class="fas fa-info-circle"></i> About</a>
+        </nav>
+    </div>
+
+    <main id="main-content" class="main-content">
+        <div class="container">
+            <!-- Breadcrumb (dynamic) -->
+            <nav class="breadcrumb" style="margin: 1.5rem 0 1rem; font-size:0.875rem;">
+                <a href="./index.html" style="text-decoration:none; color:#6b7280;">Home</a>
+                <i class="fas fa-chevron-right" style="margin:0 0.5rem; font-size:0.7rem;"></i>
+                <span id="breadcrumb-current">All Collections</span>
+            </nav>
+
+            <div class="collections-main">
+                <!-- FILTER SIDEBAR -->
+                <aside class="filters-sidebar">
+                    <h3 style="margin-bottom:1rem;">Filters</h3>
+                    
+                    <div class="filter-group">
+                        <h4>Price Range</h4>
+                        <div class="filter-option"><input type="radio" name="price" value="any" checked> <label>Any</label></div>
+                        <div class="filter-option"><input type="radio" name="price" value="under_499"> <label>Under ₹499</label></div>
+                        <div class="filter-option"><input type="radio" name="price" value="500_999"> <label>₹500 – ₹999</label></div>
+                        <div class="filter-option"><input type="radio" name="price" value="1000_1999"> <label>₹1000 – ₹1999</label></div>
+                        <div class="filter-option"><input type="radio" name="price" value="2000_plus"> <label>₹2000+</label></div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Discount %</h4>
+                        <div class="filter-option"><input type="checkbox" value="10"> <label>10%+ off</label></div>
+                        <div class="filter-option"><input type="checkbox" value="25"> <label>25%+ off</label></div>
+                        <div class="filter-option"><input type="checkbox" value="50"> <label>50%+ off</label></div>
+                        <div class="filter-option"><input type="checkbox" value="70"> <label>70%+ off</label></div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Store</h4>
+                        <div class="filter-option"><input type="checkbox" value="amazon"> <label>Amazon</label></div>
+                        <div class="filter-option"><input type="checkbox" value="flipkart"> <label>Flipkart</label></div>
+                        <div class="filter-option"><input type="checkbox" value="myntra"> <label>Myntra</label></div>
+                        <div class="filter-option"><input type="checkbox" value="ajio"> <label>Ajio</label></div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Sort By</h4>
+                        <select id="sortBy" class="sort-select" style="width:100%;">
+                            <option value="recommended">Recommended</option>
+                            <option value="price_asc">Price: Low to High</option>
+                            <option value="price_desc">Price: High to Low</option>
+                            <option value="discount_desc">Discount % (High to Low)</option>
+                        </select>
+                    </div>
+
+                    <button id="clearAllFilters" class="clear-filters">Clear all filters</button>
+                </aside>
+
+                <!-- PRODUCTS AREA -->
+                <div class="products-area">
+                    <div class="result-header">
+                        <div><span id="resultCount">0</span> deals found</div>
+                        <div class="active-filters" id="activeFilters"></div>
+                    </div>
+                    <div id="productsGrid" class="deals-grid">
+                        <!-- products will be injected here -->
+                        <div class="deal-skeleton">Loading deals...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BROWSE ALL COLLECTIONS LIST -->
+            <div class="browse-all-collections">
+                <h2 class="section-title" style="font-size:1.5rem; margin-bottom:1rem;">Browse All Collections</h2>
+                <div class="collection-links-grid" id="allCollectionsList">
+                    <!-- generated by JS or static -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo-container"><a href="./index.html" class="logo"><span class="brand-name">GetUpDeals</span></a></div>
+                    <p class="footer-description">Your trusted source for the best e-commerce deals, discounts, and affiliate offers.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-pinterest-p"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col"><h3 class="footer-title">Quick Links</h3><ul class="footer-links"><li><a href="./index.html">Home</a></li><li><a href="./deals/index.html">Today's Deals</a></li><li><a href="./blog/index.html">Blog</a></li><li><a href="./collections.html">Collections</a></li><li><a href="./pages/about/index.html">About</a></li><li><a href="./pages/contact/index.html">Contact</a></li></ul></div>
+                <div class="footer-col"><h3 class="footer-title">Top Collections</h3><ul class="footer-links"><li><a href="./collections.html?cat=fashion">Fashion</a></li><li><a href="./collections.html?cat=electronics">Electronics</a></li><li><a href="./collections.html?cat=gadgets">Gadgets</a></li><li><a href="./collections.html?cat=home-appliances">Home Appliances</a></li></ul></div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Contact & Legal</h3>
+                    <ul class="footer-contact"><li><i class="fas fa-envelope"></i><a href="mailto:contact@getupdeals.com">contact@getupdeals.com</a></li><li><i class="fas fa-phone"></i><span>Support: +91 98765 43210</span></li><li><i class="fas fa-map-marker-alt"></i><span>Mumbai, India</span></li></ul>
+                    <div class="footer-legal-links"><a href="./pages/privacy-policy/index.html">Privacy Policy</a><a href="./pages/terms-of-service/index.html">Terms of Service</a><a href="./pages/affiliate-disclosure/index.html">Affiliate Disclosure</a><a href="./pages/disclaimer/index.html">Disclaimer</a><a href="./pages/sitemap/index.html">Sitemap</a><a href="./pages/cookie-policy/index.html">Cookie Policy</a></div>
+                    <div class="footer-apps"><p>Get Our App</p><div class="app-buttons"><a href="#" class="app-btn"><i class="fab fa-google-play"></i> Google Play</a><a href="#" class="app-btn"><i class="fab fa-app-store"></i> App Store</a></div></div>
+                </div>
+            </div>
+            <div class="footer-bottom"><div class="footer-bottom-content"><p>&copy; 2026 GetUpDeals.com. All rights reserved.</p><div class="payment-methods"><span>We Support:</span><div class="payment-icons"><i class="fab fa-cc-visa"></i><i class="fab fa-cc-mastercard"></i><i class="fab fa-cc-amex"></i><i class="fab fa-cc-paypal"></i><i class="fas fa-university"></i><i class="fas fa-mobile-alt"></i></div></div></div><div class="affiliate-partners"><span>Trusted Partner Stores:</span><div class="partner-logos"><span class="partner-logo amazon">Amazon</span><span class="partner-logo flipkart">Flipkart</span><span class="partner-logo myntra">Myntra</span><span class="partner-logo ajio">Ajio</span><span class="partner-logo tata">Tata CLiQ</span><span class="partner-logo nykaa">Nykaa</span><span class="partner-logo meesho">Meesho</span><span class="partner-logo more">+15 More</span></div></div></div>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fas fa-chevron-up"></i></button>
+    <div class="cookie-consent" id="cookieConsent" role="dialog" hidden>...</div>
+
+
+
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
+    <script src="./assets/js/firebase-config.js"></script>
+
+    <!-- Global JS files (defer) -->
+    <script src="./assets/js/main.js" defer></script>
+    <script src="./assets/js/navigation.js" defer></script>
+    <script src="./assets/js/deals-loader.js" defer></script>
+    <script src="./assets/js/affiliate-integrations.js" defer></script>
+    <script src="./assets/js/analytics.js" defer></script>
+    <script src="./assets/js/optimizations.js" defer></script>
+    <script src="./assets/js/cookie-consent.js" defer></script>
+        <script>
+        // ---------- SAMPLE PRODUCT DATA (replace with Firestore later) ----------
+        const allDeals = [
+            { id: 1, title: "Wireless Noise Cancelling Headphones", price: 2999, originalPrice: 5999, discount: 50, store: "amazon", category: "electronics", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=180&fit=crop", link: "#" },
+            { id: 2, title: "Vitamin C Face Serum", price: 399, originalPrice: 999, discount: 60, store: "myntra", category: "beauty-skincare", image: "https://images.unsplash.com/photo-1596462502278-27bfdc8b3a28?w=300&h=180&fit=crop", link: "#" },
+            { id: 3, title: "Smart Watch Fitness Tracker", price: 1999, originalPrice: 4999, discount: 60, store: "flipkart", category: "gadgets", image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300&h=180&fit=crop", link: "#" },
+            { id: 4, title: "Men's Cotton T-Shirt Pack", price: 499, originalPrice: 1499, discount: 67, store: "ajio", category: "fashion", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=180&fit=crop", link: "#" },
+            { id: 5, title: "Air Fryer 5.5L", price: 3999, originalPrice: 8999, discount: 55, store: "amazon", category: "home-appliances", image: "https://images.unsplash.com/photo-1585515325310-2593fd9a1e99?w=300&h=180&fit=crop", link: "#" },
+            { id: 6, title: "Nike Running Shoes", price: 2499, originalPrice: 5999, discount: 58, store: "myntra", category: "fashion", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=180&fit=crop", link: "#" },
+            { id: 7, title: "Bluetooth Speaker", price: 1299, originalPrice: 2999, discount: 57, store: "flipkart", category: "electronics", image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=300&h=180&fit=crop", link: "#" },
+            { id: 8, title: "Matte Lipstick Set", price: 299, originalPrice: 999, discount: 70, store: "myntra", category: "beauty-skincare", image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=300&h=180&fit=crop", link: "#" },
+            { id: 9, title: "Robot Vacuum Cleaner", price: 12999, originalPrice: 24999, discount: 48, store: "amazon", category: "home-appliances", image: "https://images.unsplash.com/photo-1568062986836-46bea5fb0f52?w=300&h=180&fit=crop", link: "#" },
+            { id: 10, title: "Gaming Mouse", price: 799, originalPrice: 1999, discount: 60, store: "flipkart", category: "gadgets", image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=300&h=180&fit=crop", link: "#" }
+        ];
+
+        // Collection mapping for display names
+        const collectionNames = {
+            'fashion': 'Fashion',
+            'electronics': 'Electronics',
+            'gadgets': 'Gadgets',
+            'home-appliances': 'Home Appliances',
+            'beauty-skincare': 'Beauty & Skincare',
+            'under-499': 'Under ₹499',
+            'ending-soon': 'Ending Soon',
+            'sports': 'Sports',
+            'toys-games': 'Toys & Games',
+            'all': 'All Collections'
+        };
+
+        // All collection slugs (for the browse list)
+        const allCollectionSlugs = [
+            'ending-soon', 'under-499', 'beauty-skincare', 'tech', 'date-night-couples',
+            'fitness-wellness', 'toys-games', 'top-50', 'name-brand-deals', 'name-brand-tech',
+            'name-brand-beauty', 'name-brand-household', 'name-brand-toys', 'name-brand-sports',
+            'name-brand-clothing', 'giveaway', 'top-promo-codes', 'promo-codes-only',
+            'promo-codes-beauty', 'hot50-tech', 'promo-codes-tech', 'snacks', 'sports',
+            'hot50-snacks', 'promo-codes-toys', 'hot50-toys', 'promo-codes-fitness',
+            'hot50-household', 'top-deals', 'hot50-beauty', 'hot50-sports', 'rossen-reports',
+            'amazon-haul', 'promo-codes-arts', 'promo-codes-automotive', 'promo-codes-baby',
+            'promo-codes-clothing', 'promo-codes-food', 'promo-codes-home', 'promo-codes-musical',
+            'promo-codes-office', 'promo-codes-patio', 'promo-codes-pet', 'promo-codes-sports',
+            'promo-codes-tools'
+        ];
+
+        let currentFilters = {
+            category: null,
+            price: 'any',
+            discounts: [],
+            stores: [],
+            sort: 'recommended'
+        };
+
+        // DOM elements
+        const productsGrid = document.getElementById('productsGrid');
+        const resultCountSpan = document.getElementById('resultCount');
+        const activeFiltersDiv = document.getElementById('activeFilters');
+        const breadcrumbSpan = document.getElementById('breadcrumb-current');
+        const clearBtn = document.getElementById('clearAllFilters');
+        const sortSelect = document.getElementById('sortBy');
+
+        // Helper: get URL params
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                cat: params.get('cat'),
+                price: params.get('price'),
+                discount: params.get('discount') ? params.get('discount').split(',') : [],
+                store: params.get('store') ? params.get('store').split(',') : [],
+                sort: params.get('sort')
+            };
+        }
+
+        // Update URL with current filters
+        function updateUrl() {
+            const params = new URLSearchParams();
+            if (currentFilters.category) params.set('cat', currentFilters.category);
+            if (currentFilters.price && currentFilters.price !== 'any') params.set('price', currentFilters.price);
+            if (currentFilters.discounts.length) params.set('discount', currentFilters.discounts.join(','));
+            if (currentFilters.stores.length) params.set('store', currentFilters.stores.join(','));
+            if (currentFilters.sort !== 'recommended') params.set('sort', currentFilters.sort);
+            const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+            window.history.pushState({}, '', newUrl);
+        }
+
+        // Apply filters from URL
+        function applyFiltersFromUrl() {
+            const params = getUrlParams();
+            currentFilters.category = params.cat || null;
+            currentFilters.price = params.price || 'any';
+            currentFilters.discounts = params.discount || [];
+            currentFilters.stores = params.store || [];
+            currentFilters.sort = params.sort || 'recommended';
+
+            // Update UI inputs
+            document.querySelectorAll('input[name="price"]').forEach(radio => {
+                if (radio.value === currentFilters.price) radio.checked = true;
+            });
+            document.querySelectorAll('.filter-group input[type="checkbox"]').forEach(cb => {
+                const val = cb.value;
+                if (currentFilters.discounts.includes(val) || currentFilters.stores.includes(val)) cb.checked = true;
+                else cb.checked = false;
+            });
+            if (sortSelect) sortSelect.value = currentFilters.sort;
+            updateBreadcrumb();
+            filterAndRender();
+        }
+
+        function updateBreadcrumb() {
+            if (currentFilters.category && collectionNames[currentFilters.category]) {
+                breadcrumbSpan.innerText = collectionNames[currentFilters.category];
+            } else {
+                breadcrumbSpan.innerText = 'All Collections';
+            }
+        }
+
+        // Filter deals based on currentFilters
+        function getFilteredDeals() {
+            let filtered = [...allDeals];
+            if (currentFilters.category) {
+                filtered = filtered.filter(deal => deal.category === currentFilters.category);
+            }
+            // price filter
+            if (currentFilters.price !== 'any') {
+                const [min, max] = currentFilters.price.split('_');
+                if (min === 'under') {
+                    filtered = filtered.filter(deal => deal.price < 499);
+                } else if (max === 'plus') {
+                    filtered = filtered.filter(deal => deal.price >= 2000);
+                } else {
+                    const low = parseInt(min);
+                    const high = parseInt(max);
+                    filtered = filtered.filter(deal => deal.price >= low && deal.price <= high);
+                }
+            }
+            // discount filters
+            if (currentFilters.discounts.length) {
+                const minDiscount = Math.min(...currentFilters.discounts.map(d => parseInt(d)));
+                filtered = filtered.filter(deal => deal.discount >= minDiscount);
+            }
+            // store filters
+            if (currentFilters.stores.length) {
+                filtered = filtered.filter(deal => currentFilters.stores.includes(deal.store));
+            }
+            // sort
+            switch (currentFilters.sort) {
+                case 'price_asc': filtered.sort((a,b) => a.price - b.price); break;
+                case 'price_desc': filtered.sort((a,b) => b.price - a.price); break;
+                case 'discount_desc': filtered.sort((a,b) => b.discount - a.discount); break;
+                default: break;
+            }
+            return filtered;
+        }
+
+        function renderProducts(deals) {
+            if (!deals.length) {
+                productsGrid.innerHTML = '<div class="empty-state">No deals match your filters. Try clearing filters.</div>';
+                resultCountSpan.innerText = '0';
+                return;
+            }
+            resultCountSpan.innerText = deals.length;
+            productsGrid.innerHTML = deals.map(deal => `
+                <div class="deal-card">
+                    <img class="deal-image" src="${deal.image}" alt="${deal.title}" loading="lazy">
+                    <div class="deal-content">
+                        <div class="deal-title">${deal.title}</div>
+                        <div class="price">
+                            <span class="original-price">₹${deal.originalPrice}</span>
+                            <span class="final-price">₹${deal.price}</span>
+                            <span class="discount-badge">${deal.discount}% OFF</span>
+                        </div>
+                        <div class="store-badge"><i class="fab fa-${deal.store}"></i> ${deal.store.charAt(0).toUpperCase() + deal.store.slice(1)}</div>
+                        <a href="${deal.link}" class="view-deal-btn" target="_blank" rel="noopener">View Deal</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateActiveFiltersUI() {
+            const chips = [];
+            if (currentFilters.category && collectionNames[currentFilters.category]) {
+                chips.push(`<span class="filter-chip">Category: ${collectionNames[currentFilters.category]} <span class="remove" data-type="category">✕</span></span>`);
+            }
+            if (currentFilters.price !== 'any') {
+                let priceLabel = '';
+                if (currentFilters.price === 'under_499') priceLabel = 'Under ₹499';
+                else if (currentFilters.price === '500_999') priceLabel = '₹500 – ₹999';
+                else if (currentFilters.price === '1000_1999') priceLabel = '₹1000 – ₹1999';
+                else if (currentFilters.price === '2000_plus') priceLabel = '₹2000+';
+                chips.push(`<span class="filter-chip">Price: ${priceLabel} <span class="remove" data-type="price">✕</span></span>`);
+            }
+            currentFilters.discounts.forEach(d => {
+                chips.push(`<span class="filter-chip">${d}%+ off <span class="remove" data-type="discount" data-value="${d}">✕</span></span>`);
+            });
+            currentFilters.stores.forEach(s => {
+                chips.push(`<span class="filter-chip">Store: ${s} <span class="remove" data-type="store" data-value="${s}">✕</span></span>`);
+            });
+            activeFiltersDiv.innerHTML = chips.join('');
+            // attach remove handlers
+            document.querySelectorAll('.filter-chip .remove').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const type = el.dataset.type;
+                    const value = el.dataset.value;
+                    if (type === 'category') { currentFilters.category = null; }
+                    else if (type === 'price') { currentFilters.price = 'any'; document.querySelector('input[name="price"][value="any"]').checked = true; }
+                    else if (type === 'discount') { currentFilters.discounts = currentFilters.discounts.filter(d => d !== value); }
+                    else if (type === 'store') { currentFilters.stores = currentFilters.stores.filter(s => s !== value); }
+                    updateUrl();
+                    filterAndRender();
+                });
+            });
+        }
+
+        function filterAndRender() {
+            const filtered = getFilteredDeals();
+            renderProducts(filtered);
+            updateActiveFiltersUI();
+        }
+
+        // Event listeners for filter inputs
+        function bindFilterEvents() {
+            document.querySelectorAll('input[name="price"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if (e.target.checked) currentFilters.price = e.target.value;
+                    updateUrl();
+                    filterAndRender();
+                });
+            });
+            document.querySelectorAll('.filter-group input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', (e) => {
+                    const val = e.target.value;
+                    if (e.target.closest('.filter-group').querySelector('h4')?.innerText === 'Discount %') {
+                        if (e.target.checked) currentFilters.discounts.push(val);
+                        else currentFilters.discounts = currentFilters.discounts.filter(v => v !== val);
+                    } else if (e.target.closest('.filter-group').querySelector('h4')?.innerText === 'Store') {
+                        if (e.target.checked) currentFilters.stores.push(val);
+                        else currentFilters.stores = currentFilters.stores.filter(v => v !== val);
+                    }
+                    updateUrl();
+                    filterAndRender();
+                });
+            });
+            sortSelect.addEventListener('change', (e) => {
+                currentFilters.sort = e.target.value;
+                updateUrl();
+                filterAndRender();
+            });
+            clearBtn.addEventListener('click', () => {
+                currentFilters = { category: currentFilters.category, price: 'any', discounts: [], stores: [], sort: 'recommended' };
+                updateUrl();
+                applyFiltersFromUrl(); // reload from URL (clears all except cat)
+            });
+        }
+
+        // Generate Browse All Collections list
+        function renderCollectionList() {
+            const container = document.getElementById('allCollectionsList');
+            if (!container) return;
+            const links = allCollectionSlugs.map(slug => {
+                const displayName = collectionNames[slug] || slug.replace(/-/g, ' ');
+                return `<a href="./collections.html?cat=${slug}">${displayName}</a>`;
+            }).join('');
+            container.innerHTML = links;
+        }
+
+        // Initial load
+        function init() {
+            bindFilterEvents();
+            applyFiltersFromUrl();
+            renderCollectionList();
+        }
+        init();
+    </script>
+
+
+</body>
+</html>

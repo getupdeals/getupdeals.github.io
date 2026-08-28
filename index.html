@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetUpDeals – Best E‑commerce Deals & Discounts</title>
+    <meta name="description" content="Find the best deals, discounts, and coupons from top e-commerce stores. Save money with our curated affiliate offers.">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="deals, discounts, coupons, affiliate offers, ecommerce, save money">
+    <meta property="og:title" content="GetUpDeals | Best E-commerce Deals">
+    <meta property="og:description" content="Find the best deals and save money with curated affiliate offers.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://getupdeals.com">
+    <meta property="og:image" content="https://getupdeals.com/assets/images/logo/logo-og.png">
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="GetUpDeals">
+    <meta name="twitter:description" content="Best E-commerce Deals & Discounts">
+    
+    <!-- PWA -->
+    <meta name="theme-color" content="#2563eb">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="./assets/images/logo/favicon-set/favicon.ico">
+    <link rel="apple-touch-icon" href="./assets/images/logo/favicon-set/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="./favicon-96x96.png" sizes="96x96" />
+    <link rel="shortcut icon" href="./favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="./assets/css/critical.css">
+    <link rel="stylesheet" href="./assets/css/main.css">
+    <link rel="stylesheet" href="./assets/css/components.css">
+    <link rel="stylesheet" href="./assets/css/themes.css">
+    <link rel="stylesheet" href="./assets/css/responsisve.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Skip to Content -->
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <span class="deal-alert"><i class="fas fa-bolt"></i> Flash Sale: 50% OFF on Fashion – Ends Tonight!</span>
+                <div class="top-bar-links">
+                    <a href="./pages/about/index.html">About</a>
+                    <a href="./pages/contact/index.html">Contact</a>
+                    <a href="./blog/index.html">Blog</a>
+                    <a href="./pages/affiliate-disclosure/index.html" class="affiliate-badge">Affiliate</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Header -->
+    <header class="main-header" role="banner">
+        <div class="container">
+            <div class="logo-container">
+                <a href="./index.html" class="logo"><span class="brand-name">GetUpDeals</span></a>
+            </div>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="./index.html" class="nav-link active">Home</a></li>
+                    <li class="nav-dropdown">
+                        <a href="./collections/all-collections/index.html" class="nav-link">Collections <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="./collections/fashion/index.html" class="dropdown-item"><i class="fas fa-tshirt"></i> Fashion</a>
+                            <a href="./collections/electronics/index.html" class="dropdown-item"><i class="fas fa-laptop"></i> Electronics</a>
+                            <a href="./collections/gadgets/index.html" class="dropdown-item"><i class="fas fa-mobile-alt"></i> Gadgets</a>
+                            <a href="./collections/home-appliances/index.html" class="dropdown-item"><i class="fas fa-blender"></i> Home Appliances</a>
+                            <a href="./collections/all-collections/index.html" class="dropdown-item view-all"><i class="fas fa-th"></i> View All Collections</a>
+                        </div>
+                    </li>
+                    <li><a href="./deals/index.html" class="nav-link">Today's Deals</a></li>
+                    <li><a href="./blog/index.html" class="nav-link">Blog</a></li>
+                    <li><a href="./pages/contact/index.html" class="nav-link">Contact</a></li>
+                </ul>
+            </nav> 
+            
+            <div class="header-actions">
+                <!-- Account Button -->
+                <button class="account-btn" id="accountBtn">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Sign In</span>
+                </button>
+
+                <!-- Search Container -->
+                <div class="search-container" role="search">
+                    <form class="search-form" action="../api/deals/search.php" method="get">
+                        <input type="search" name="q" placeholder="Search for deals..." class="search-input" aria-label="Search deals">
+                        <button type="button" class="search-btn" aria-label="Submit search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Account Dropdown (Desktop) – DYNAMIC CONTENT ONLY -->
+    <div class="account-dropdown" id="accountDropdown" role="menu">
+        <div class="account-dropdown-inner"></div>
+    </div>
+
+    <!-- Reward Modal -->
+    <div class="modal-overlay" id="rewardModal">
+        <div class="reward-modal">
+            <button class="close-modal" id="closeRewardModal">&times;</button>
+            <h3 id="rewardModalTitle">Rewards</h3>
+            <div id="rewardModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation (slide-out) with UNIFIED ACCOUNT PANEL -->
+    <div class="mobile-nav" id="mobileNav" hidden>
+        <div class="mobile-nav-header">
+            <a href="./index.html" class="mobile-logo"><span class="brand-name">GetUpDeals</span></a>
+            <button class="mobile-nav-close" id="mobileNavClose"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <!-- DYNAMIC ACCOUNT PANEL for mobile – same content as desktop dropdown -->
+        <div id="mobileAccountContainer" class="mobile-account-panel"></div>
+        
+        <nav class="mobile-nav-menu" aria-label="Mobile navigation">
+            <a href="./index.html" class="mobile-nav-link active"><i class="fas fa-home"></i> Home</a>
+            <div class="mobile-nav-dropdown">
+                <button class="mobile-nav-link" aria-expanded="false">
+                    <i class="fas fa-th"></i> Collections
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="mobile-dropdown-menu">
+                    <a href="./collections/fashion/index.html"><i class="fas fa-tshirt"></i> Fashion</a>
+                    <a href="./collections/electronics/index.html"><i class="fas fa-laptop"></i> Electronics</a>
+                    <a href="./collections/gadgets/index.html"><i class="fas fa-mobile-alt"></i> Gadgets</a>
+                    <a href="./collections/home-appliances/index.html"><i class="fas fa-blender"></i> Home Appliances</a>
+                    <a href="./collections/all-collections/index.html"><i class="fas fa-eye"></i> View All Collections</a>
+                </div>
+            </div>
+            <a href="./deals/index.html" class="mobile-nav-link"><i class="fas fa-tag"></i> Today's Deals</a>
+            <a href="./blog/index.html" class="mobile-nav-link"><i class="fas fa-blog"></i> Blog</a>
+            <a href="./pages/contact/index.html" class="mobile-nav-link"><i class="fas fa-envelope"></i> Contact</a>
+            <a href="./pages/about/index.html" class="mobile-nav-link"><i class="fas fa-info-circle"></i> About</a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <!-- Blog Banner -->
+        <div class="blog-banner" role="region" aria-label="Latest from blog">
+            <div class="container">
+                <div class="banner-content">
+                    <h2>Latest Buying Guides & Deals</h2>
+                    <p>Expert advice to help you save money – <a href="./blog/index.html">read our blog <i class="fas fa-arrow-right"></i></a></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hero Section -->
+        <section class="hero-section" aria-labelledby="hero-title">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title" id="hero-title">Find Amazing Deals & Save Big</h1>
+                    <p class="hero-subtitle">Curated e-commerce deals with exclusive discounts. Shop smart with our verified affiliate offers.</p>
+                    
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">10,000+</span>
+                            <span class="stat-label">Active Deals</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Partner Stores</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">₹25 Cr+</span>
+                            <span class="stat-label">Saved by Users</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Shopping Deals" loading="lazy">
+                </div>
+            </div>
+        </section>
+
+        <!-- Collections Grid -->
+        <section class="categories-section" aria-labelledby="collections-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" id="collections-title">Shop by Collection</h2>
+                    <a href="./collections/all-collections/index.html" class="section-link">View All Collections <i class="fas fa-arrow-right"></i></a>
+                </div>
+                
+                <div class="categories-grid" role="list">
+                    <a href="./collections/fashion/index.html" class="category-card" role="listitem">
+                        <div class="category-icon"><i class="fas fa-tshirt"></i></div>
+                        <h3>Fashion & Apparel</h3>
+                        <p>Clothing, Footwear, Accessories, Watches</p>
+                        <span class="category-count">1,245 Deals</span>
+                        <span class="category-discount">Up to 80% OFF</span>
+                    </a>
+                    <a href="./collections/electronics/index.html" class="category-card" role="listitem">
+                        <div class="category-icon"><i class="fas fa-laptop"></i></div>
+                        <h3>Electronics</h3>
+                        <p>Mobiles, Laptops, TVs, Cameras, Audio</p>
+                        <span class="category-count">895 Deals</span>
+                        <span class="category-discount">Up to 70% OFF</span>
+                    </a>
+                    <a href="./collections/gadgets/index.html" class="category-card" role="listitem">
+                        <div class="category-icon"><i class="fas fa-mobile-alt"></i></div>
+                        <h3>Gadgets & Tech</h3>
+                        <p>Smart Watches, Headphones, Power Banks</p>
+                        <span class="category-count">556 Deals</span>
+                        <span class="category-discount">Up to 65% OFF</span>
+                    </a>
+                    <a href="./collections/home-appliances/index.html" class="category-card" role="listitem">
+                        <div class="category-icon"><i class="fas fa-blender"></i></div>
+                        <h3>Home & Kitchen</h3>
+                        <p>Appliances, Furniture, Cookware, Decor</p>
+                        <span class="category-count">398 Deals</span>
+                        <span class="category-discount">Up to 75% OFF</span>
+                    </a>
+                    <a href="./collections/all-collections/index.html" class="category-card view-all-card" role="listitem">
+                        <div class="category-icon"><i class="fas fa-arrow-right"></i></div>
+                        <h3>All Collections</h3>
+                        <p>Explore more deals</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Deals Section -->
+        <section class="featured-deals-section" aria-labelledby="deals-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" id="deals-title">🔥 Today's Hot Deals</h2>
+                    <div class="deal-filters" role="tablist">
+                        <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true">All Stores</button>
+                        <button class="filter-btn" data-filter="amazon" role="tab" aria-selected="false"><i class="fab fa-amazon"></i> Amazon</button>
+                        <button class="filter-btn" data-filter="flipkart" role="tab" aria-selected="false"><span class="store-icon">fk</span> Flipkart</button>
+                        <button class="filter-btn" data-filter="myntra" role="tab" aria-selected="false"><span class="store-icon">m</span> Myntra</button>
+                        <button class="filter-btn" data-filter="ajio" role="tab" aria-selected="false"><span class="store-icon">aj</span> Ajio</button>
+                    </div>
+                </div>
+                
+                <!-- Deals Grid with Skeleton Loaders -->
+                <div class="deals-grid" id="dealsGrid" role="list">
+                    <!-- 4 skeleton cards – will be replaced by actual deals via deals-loader.js -->
+                    <div class="deal-skeleton" role="listitem">
+                        <div class="skeleton-image"></div>
+                        <div class="skeleton-content">
+                            <div class="skeleton-line"></div>
+                            <div class="skeleton-line short"></div>
+                            <div class="skeleton-line"></div>
+                        </div>
+                    </div>
+                    <div class="deal-skeleton" role="listitem">
+                        <div class="skeleton-image"></div>
+                        <div class="skeleton-content">
+                            <div class="skeleton-line"></div>
+                            <div class="skeleton-line short"></div>
+                            <div class="skeleton-line"></div>
+                        </div>
+                    </div>
+                    <div class="deal-skeleton" role="listitem">
+                        <div class="skeleton-image"></div>
+                        <div class="skeleton-content">
+                            <div class="skeleton-line"></div>
+                            <div class="skeleton-line short"></div>
+                            <div class="skeleton-line"></div>
+                        </div>
+                    </div>
+                    <div class="deal-skeleton" role="listitem">
+                        <div class="skeleton-image"></div>
+                        <div class="skeleton-content">
+                            <div class="skeleton-line"></div>
+                            <div class="skeleton-line short"></div>
+                            <div class="skeleton-line"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-footer">
+                    <a href="./deals/index.html" class="btn-view-all">View All Deals <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Store Exclusive Deals -->
+        <section class="store-deals-section" aria-labelledby="store-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" id="store-title">💎 Store Exclusive Deals</h2>
+                    <p class="section-subtitle">Best offers from your favorite stores</p>
+                </div>
+                <div class="store-tabs" role="list">
+                    <div class="store-tab active" data-store="amazon" role="listitem">
+                        <div class="store-header"><i class="fab fa-amazon"></i><h3>Amazon India</h3><span class="deal-badge">150+ Deals</span></div>
+                        <p>Amazon Prime Day, Great Indian Festival & more</p>
+                        <a href="./deals/index.html" class="store-link">View Amazon Deals →</a>
+                    </div>
+                    <div class="store-tab" data-store="flipkart" role="listitem">
+                        <div class="store-header"><span class="store-icon-lg">fk</span><h3>Flipkart</h3><span class="deal-badge">120+ Deals</span></div>
+                        <p>Big Billion Days, Flipkart Plus & exclusive offers</p>
+                        <a href="./deals/index.html" class="store-link">View Flipkart Deals →</a>
+                    </div>
+                    <div class="store-tab" data-store="myntra" role="listitem">
+                        <div class="store-header"><span class="store-icon-lg">m</span><h3>Myntra</h3><span class="deal-badge">85+ Deals</span></div>
+                        <p>End of Reason Sale, Fashion Days & brand discounts</p>
+                        <a href="./deals/index.html" class="store-link">View Myntra Deals →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Preview -->
+        <section class="blog-preview-section" aria-labelledby="blog-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" id="blog-title">📚 Latest from Our Blog</h2>
+                    <a href="./blog/index.html" class="section-link">Read All Articles <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="blog-grid" role="list">
+                    <article class="blog-card" role="listitem">
+                        <a href="./blog/best-tshirts-under-999/index.html">
+                            <div class="blog-image"><img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Best T-Shirts" loading="lazy"><span class="blog-category">Fashion</span></div>
+                            <div class="blog-content"><h3>Best T-Shirts Under ₹999 for Men & Women</h3><p>Curated list of premium quality t-shirts from top brands at unbelievable prices.</p><div class="blog-meta"><span><i class="far fa-clock"></i> 5 min read</span><span><i class="far fa-calendar"></i> Dec 15, 2024</span></div></div>
+                        </a>
+                    </article>
+                    <article class="blog-card" role="listitem">
+                        <a href="./blog/best-jeans-under-999/index.html">
+                            <div class="blog-image"><img src="https://images.unsplash.com/photo-1542272604-787c3835535d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Best Jeans" loading="lazy"><span class="blog-category">Fashion</span></div>
+                            <div class="blog-content"><h3>Top 10 Jeans Under ₹999 for Perfect Fit</h3><p>Find the best jeans from Levi's, Lee, Wrangler and more at discounted prices.</p><div class="blog-meta"><span><i class="far fa-clock"></i> 7 min read</span><span><i class="far fa-calendar"></i> Dec 12, 2024</span></div></div>
+                        </a>
+                    </article>
+                    <article class="blog-card" role="listitem">
+                        <a href="./blog/top-gadgets-under-5000/index.html">
+                            <div class="blog-image"><img src="https://images.unsplash.com/photo-1546054451-aa7395f773fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Gadgets" loading="lazy"><span class="blog-category">Tech</span></div>
+                            <div class="blog-content"><h3>Top 15 Gadgets Under ₹5000 That Are Worth Buying</h3><p>From smart watches to wireless earphones - get the best tech on a budget.</p><div class="blog-meta"><span><i class="far fa-clock"></i> 8 min read</span><span><i class="far fa-calendar"></i> Dec 10, 2024</span></div></div>
+                        </a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seasonal Deals -->
+        <section class="seasonal-deals-section" aria-labelledby="seasonal-title">
+            <div class="container">
+                <div class="seasonal-header"><h2 class="section-title" id="seasonal-title">🎄 Winter Season Special</h2><p class="section-subtitle">Stay warm with amazing winter deals</p></div>
+                <div class="seasonal-categories" role="list">
+                    <a href="./deals/fashion/index.html" class="seasonal-category" role="listitem"><div class="category-content"><h3>Winter Clothing</h3><p>Jackets, Sweaters, Thermals</p><span class="discount-badge">Up to 70% OFF</span></div><div class="category-image"><img src="https://images.unsplash.com/photo-1515434126000-961d90ff09db?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Winter Clothing" loading="lazy"></div></a>
+                    <a href="./deals/home-appliances/index.html" class="seasonal-category" role="listitem"><div class="category-content"><h3>Heaters & Warmers</h3><p>Room Heaters, Geysers, Blankets</p><span class="discount-badge">Up to 60% OFF</span></div><div class="category-image"><img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Heaters" loading="lazy"></div></a>
+                    <a href="./deals/gadgets/index.html" class="seasonal-category" role="listitem"><div class="category-content"><h3>Winter Gadgets</h3><p>Hand Warmers, Smart Socks, Mugs</p><span class="discount-badge">Up to 55% OFF</span></div><div class="category-image"><img src="https://images.unsplash.com/photo-1570196911496-66bd58a5b7b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Winter Gadgets" loading="lazy"></div></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features-section" aria-labelledby="features-title">
+            <div class="container"><h2 class="section-title center" id="features-title">Why Choose GetUpDeals?</h2><p class="section-subtitle center">We make online shopping smarter and more affordable</p>
+                <div class="features-grid" role="list">
+                    <div class="feature-card" role="listitem"><div class="feature-icon"><i class="fas fa-shield-alt"></i></div><h3>Verified Deals</h3><p>All deals are tested and verified for authenticity before posting.</p></div>
+                    <div class="feature-card" role="listitem"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3>Real-time Updates</h3><p>Get instant notifications when new deals go live.</p></div>
+                    <div class="feature-card" role="listitem"><div class="feature-icon"><i class="fas fa-tags"></i></div><h3>Best Price Guarantee</h3><p>We compare prices across stores to ensure you get the best deal.</p></div>
+                    <div class="feature-card" role="listitem"><div class="feature-icon"><i class="fas fa-lock"></i></div><h3>Secure Shopping</h3><p>All affiliate links are secure and from trusted partners.</p></div>
+                    <div class="feature-card" role="listitem"><div class="feature-icon"><i class="fas fa-clock"></i></div><h3>24/7 Deal Monitoring</h3><p>Our team monitors deals round the clock for price drops.</p></div>
+                    <div class="feature-card" role="listitem"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3>Price History</h3><p>Track price trends to buy at the lowest possible price.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter -->
+        <section class="newsletter-section" aria-labelledby="newsletter-title">
+            <div class="container"><div class="newsletter-card"><div class="newsletter-content"><h2 id="newsletter-title">Never Miss a Deal!</h2><p>Subscribe to our newsletter and get the hottest deals delivered to your inbox. Plus, get exclusive subscriber-only offers.</p><div class="newsletter-stats"><div class="stat"><span class="number">50,000+</span><span class="label">Subscribers</span></div><div class="stat"><span class="number">₹500+</span><span class="label">Average Monthly Savings</span></div></div><form class="newsletter-form" id="newsletterForm" action="javascript:void(0);" method="post"><div class="form-group"><input type="email" name="email" placeholder="Enter your email address" required><button type="submit" class="btn-subscribe">Subscribe <i class="fas fa-paper-plane"></i></button></div><div class="form-options"><label class="checkbox"><input type="checkbox" name="preferences[]" value="fashion" checked><span>Send me fashion deals</span></label><label class="checkbox"><input type="checkbox" name="preferences[]" value="tech" checked><span>Send me tech deals</span></label></div><p class="form-note">We respect your privacy. No spam, ever. Unsubscribe anytime.</p></form></div><div class="newsletter-image"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Newsletter illustration" loading="lazy"></div></div></div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials-section" aria-labelledby="testimonials-title">
+            <div class="container"><h2 class="section-title center" id="testimonials-title">What Our Users Say</h2><p class="section-subtitle center">Join thousands of happy shoppers</p>
+                <div class="testimonials-grid" role="list">
+                    <div class="testimonial-card" role="listitem"><div class="testimonial-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><p class="testimonial-text">"Saved ₹2,500 on my new laptop! GetUpDeals found a discount I couldn't find anywhere else."</p><div class="testimonial-author"><img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rajesh Kumar" loading="lazy"><div><h4>Rajesh Kumar</h4><span>Verified Buyer</span></div></div></div>
+                    <div class="testimonial-card" role="listitem"><div class="testimonial-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div><p class="testimonial-text">"The fashion deals are amazing! Got branded clothes at 70% off. Highly recommended!"</p><div class="testimonial-author"><img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Priya Sharma" loading="lazy"><div><h4>Priya Sharma</h4><span>Fashion Shopper</span></div></div></div>
+                    <div class="testimonial-card" role="listitem"><div class="testimonial-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><p class="testimonial-text">"Their price drop alerts helped me buy my smartphone at the lowest price. Saved ₹3,200!"</p><div class="testimonial-author"><img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Arun Patel" loading="lazy"><div><h4>Arun Patel</h4><span>Tech Enthusiast</span></div></div></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo-container"><a href="./index.html" class="logo"><span class="brand-name">GetUpDeals</span></a></div>
+                    <p class="footer-description">Your trusted source for the best e-commerce deals, discounts, and affiliate offers. We help you shop smarter and save more.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-pinterest-p"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col"><h3 class="footer-title">Quick Links</h3><ul class="footer-links"><li><a href="./index.html">Home</a></li><li><a href="./deals/index.html">Today's Deals</a></li><li><a href="./blog/index.html">Blog</a></li><li><a href="./collections/all-collections/index.html">Collections</a></li><li><a href="./pages/about/index.html">About Us</a></li><li><a href="./pages/contact/index.html">Contact Us</a></li></ul></div>
+                <div class="footer-col"><h3 class="footer-title">Top Collections</h3><ul class="footer-links"><li><a href="./collections/fashion/index.html">Fashion</a></li><li><a href="./collections/electronics/index.html">Electronics</a></li><li><a href="./collections/gadgets/index.html">Gadgets</a></li><li><a href="./collections/home-appliances/index.html">Home Appliances</a></li></ul></div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Contact & Legal</h3>
+                    <ul class="footer-contact"><li><i class="fas fa-envelope"></i><a href="mailto:contact@getupdeals.com">contact@getupdeals.com</a></li><li><i class="fas fa-phone"></i><span>Support: +91 98765 43210</span></li><li><i class="fas fa-map-marker-alt"></i><span>Mumbai, India</span></li></ul>
+                    <div class="footer-legal-links"><a href="./pages/privacy-policy/index.html">Privacy Policy</a><a href="./pages/terms-of-service/index.html">Terms of Service</a><a href="./pages/affiliate-disclosure/index.html">Affiliate Disclosure</a><a href="./pages/disclaimer/index.html">Disclaimer</a><a href="./pages/sitemap/index.html">Sitemap</a><a href="./pages/cookie-policy/index.html">Cookie Policy</a></div>
+                    <div class="footer-apps"><p>Get Our App</p><div class="app-buttons"><a href="#" class="app-btn"><i class="fab fa-google-play"></i> Google Play</a><a href="#" class="app-btn"><i class="fab fa-app-store"></i> App Store</a></div></div>
+                </div>
+            </div>
+            <div class="footer-bottom"><div class="footer-bottom-content"><p>&copy; 2026 GetUpDeals.com. All rights reserved.</p><div class="payment-methods"><span>We Support:</span><div class="payment-icons"><i class="fab fa-cc-visa" title="Visa"></i><i class="fab fa-cc-mastercard" title="Mastercard"></i><i class="fab fa-cc-amex" title="American Express"></i><i class="fab fa-cc-paypal" title="PayPal"></i><i class="fas fa-university" title="Net Banking"></i><i class="fas fa-mobile-alt" title="UPI"></i></div></div></div><div class="affiliate-partners"><span>Trusted Partner Stores:</span><div class="partner-logos"><span class="partner-logo amazon">Amazon</span><span class="partner-logo flipkart">Flipkart</span><span class="partner-logo myntra">Myntra</span><span class="partner-logo ajio">Ajio</span><span class="partner-logo tata">Tata CLiQ</span><span class="partner-logo nykaa">Nykaa</span><span class="partner-logo meesho">Meesho</span><span class="partner-logo more">+15 More</span></div></div></div>
+        </div>
+    </footer>
+
+    <!-- Back to Top, Cookie Consent -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fas fa-chevron-up"></i></button>
+    <div class="cookie-consent" id="cookieConsent" role="dialog" hidden>
+        <div class="cookie-content">
+            <p>We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept", you consent to our use of cookies.</p>
+            <div class="cookie-buttons">
+                <button class="cookie-btn accept" id="cookieAccept">Accept</button>
+                <button class="cookie-btn decline" id="cookieDecline">Decline</button>
+                <a href="./pages/privacy-policy/index.html" class="cookie-link">Learn More</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
+    <script src="./assets/js/firebase-config.js"></script>
+
+    <!-- Global JS files (defer) -->
+    <script src="./assets/js/main.js" defer></script>
+    <script src="./assets/js/navigation.js" defer></script>
+    <script src="./assets/js/deals-loader.js" defer></script>
+    <script src="./assets/js/affiliate-integrations.js" defer></script>
+    <script src="./assets/js/analytics.js" defer></script>
+    <script src="./assets/js/optimizations.js" defer></script>
+    <script src="./assets/js/cookie-consent.js" defer></script>
+</body>
+</html>
