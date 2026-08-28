@@ -1,0 +1,544 @@
+<!-- admin/panels/rewards.html -->
+<div class="rewards-panel">
+    <div class="panel-header">
+        <h2><i class="fas fa-gift"></i> Rewards & Bonuses</h2>
+        <button class="btn-primary" id="addRewardBtn"><i class="fas fa-plus"></i> Create Reward</button>
+    </div>
+
+    <!-- Add/Edit Reward Form (hidden by default) -->
+    <div id="rewardForm" class="reward-form" style="display: none;">
+        <div class="form-header">
+            <h3 id="formTitle"><i class="fas fa-trophy"></i> Create Reward</h3>
+            <button class="close-form-btn" id="closeFormBtn">&times;</button>
+        </div>
+        <div class="form-body">
+            <input type="hidden" id="rewardId">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Reward Name *</label>
+                    <input type="text" id="rewardName" class="form-input" placeholder="e.g., Signup Bonus, Weekend Cashback" required>
+                </div>
+                <div class="form-group">
+                    <label>Type *</label>
+                    <select id="rewardType" class="form-input" required>
+                        <option value="cashback">Cashback ($)</option>
+                        <option value="points">Points</option>
+                        <option value="discount">Discount Code</option>
+                        <option value="free_shipping">Free Shipping</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Value / Amount *</label>
+                    <input type="number" id="rewardValue" class="form-input" step="0.01" placeholder="e.g., 5.00">
+                </div>
+                <div class="form-group">
+                    <label>Minimum Purchase (optional)</label>
+                    <input type="number" id="rewardMinPurchase" class="form-input" step="0.01" placeholder="0.00">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="datetime-local" id="rewardStartDate" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date</label>
+                    <input type="datetime-local" id="rewardExpiry" class="form-input">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Eligibility Rules</label>
+                <select id="rewardEligibility" class="form-input">
+                    <option value="all">All Users</option>
+                    <option value="new_users">New Users Only</option>
+                    <option value="first_purchase">First Purchase Only</option>
+                    <option value="min_spend">Minimum Spend (set above)</option>
+                    <option value="specific_roles">Specific Roles</option>
+                </select>
+            </div>
+            <div class="form-group" id="rolesSelectGroup" style="display: none;">
+                <label>Allowed Roles</label>
+                <select id="rewardRoles" class="form-input" multiple size="3">
+                    <option value="user">User</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <small>Hold Ctrl/Cmd to select multiple</small>
+            </div>
+            <div class="form-group">
+                <label>Description (optional)</label>
+                <textarea id="rewardDescription" class="form-input" rows="2" placeholder="Describe the reward..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="rewardStatus" class="form-input">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="expired">Expired</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button class="btn-secondary" id="cancelFormBtn">Cancel</button>
+            <button class="btn-primary" id="saveRewardBtn">Save Reward</button>
+        </div>
+    </div>
+
+    <!-- Filters & Search -->
+    <div class="filters-section">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" id="searchRewards" placeholder="Search by name..." class="filter-input">
+            </div>
+            <div class="filter-group">
+                <label>Type</label>
+                <select id="typeFilter" class="filter-select">
+                    <option value="all">All Types</option>
+                    <option value="cashback">Cashback</option>
+                    <option value="points">Points</option>
+                    <option value="discount">Discount</option>
+                    <option value="free_shipping">Free Shipping</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="statusFilter" class="filter-select">
+                    <option value="all">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="expired">Expired</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button class="btn-secondary" id="resetRewardFilters">Reset</button>
+            <button class="btn-primary" id="applyRewardFilters">Apply</button>
+        </div>
+    </div>
+
+    <!-- Rewards Table -->
+    <div class="table-responsive">
+        <table class="data-table rewards-table">
+            <thead>
+                <tr>
+                    <th>Reward Name</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Eligibility</th>
+                    <th>Expiry</th>
+                    <th>Redeemed</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="rewardsTableBody">
+                <tr><td colspan="8" class="loading-placeholder">Loading rewards......</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+        <button class="page-btn" id="prevPageRewards" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+        <span class="page-info" id="pageInfoRewards">Page 1 of 1</span>
+        <button class="page-btn" id="nextPageRewards">Next <i class="fas fa-chevron-right"></i></button>
+        <div class="per-page-select">
+            <span>Show</span>
+            <select id="perPageRewards">
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+            </select>
+            <span>entries</span>
+        </div>
+    </div>
+</div>
+
+<!-- Redemption Details Modal -->
+<div id="redemptionModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-chart-line"></i> Redemption Details</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body" id="redemptionDetailsBody">
+            <div class="redemption-stats">
+                <div class="stat-item">Total Redeemed: <strong id="totalRedeemed">0</strong></div>
+                <div class="stat-item">Unique Users: <strong id="uniqueUsersRedeemed">0</strong></div>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table redemption-table">
+                    <thead><tr><th>User</th><th>Date</th><th>Order ID</th><th>Amount</th></tr></thead>
+                    <tbody id="redemptionListBody"><tr><td colspan="4">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteRewardModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle"></i> Delete Reward</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete "<strong id="deleteRewardName"></strong>"?</p>
+            <p class="text-danger">All redemption records will be lost. This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-danger" id="confirmDeleteRewardBtn">Delete Permanently</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.rewards-panel {
+    animation: fadeIn 0.3s ease;
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.panel-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.panel-header h2 i {
+    color: #3b82f6;
+    margin-right: 10px;
+}
+.reward-form {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+.form-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+.close-form-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+.close-form-btn:hover {
+    color: #ef4444;
+}
+.form-body {
+    padding: 1.5rem;
+}
+.form-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.filters-section {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.filter-group {
+    flex: 1;
+    min-width: 160px;
+}
+.filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+.filter-input, .filter-select {
+    width: 100%;
+    padding: 8px 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+.filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+.rewards-table td {
+    vertical-align: middle;
+}
+.type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.type-cashback { background: rgba(16,185,129,0.2); color: #10b981; }
+.type-points { background: rgba(59,130,246,0.2); color: #3b82f6; }
+.type-discount { background: rgba(245,158,11,0.2); color: #f59e0b; }
+.type-free_shipping { background: rgba(139,92,246,0.2); color: #8b5cf6; }
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.status-active { background: rgba(16,185,129,0.2); color: #10b981; }
+.status-inactive { background: rgba(239,68,68,0.2); color: #ef4444; }
+.status-expired { background: rgba(107,114,128,0.2); color: #6b7280; }
+.action-buttons {
+    display: flex;
+    gap: 6px;
+}
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+.action-btn.edit { color: #3b82f6; }
+.action-btn.delete { color: #ef4444; }
+.action-btn.view { color: #10b981; }
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+}
+.redemption-stats {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--bg-primary);
+    border-radius: 12px;
+}
+.stat-item {
+    font-size: 0.9rem;
+}
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    .filter-row {
+        flex-direction: column;
+    }
+    .rewards-table th, .rewards-table td {
+        font-size: 0.7rem;
+        padding: 6px 4px;
+    }
+}
+</style>
+
+<script>
+    (function() {
+        // Modal handlers
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                if (modal) modal.style.display = 'none';
+            });
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+        });
+
+        // Form show/hide
+        const addBtn = document.getElementById('addRewardBtn');
+        const formDiv = document.getElementById('rewardForm');
+        const closeFormBtn = document.getElementById('closeFormBtn');
+        const cancelFormBtn = document.getElementById('cancelFormBtn');
+
+        function showForm(editMode = false) {
+            formDiv.style.display = 'block';
+            if (!editMode) {
+                document.getElementById('formTitle').innerHTML = '<i class="fas fa-trophy"></i> Create Reward';
+                document.getElementById('rewardId').value = '';
+                document.getElementById('rewardName').value = '';
+                document.getElementById('rewardType').value = 'cashback';
+                document.getElementById('rewardValue').value = '';
+                document.getElementById('rewardMinPurchase').value = '';
+                document.getElementById('rewardStartDate').value = '';
+                document.getElementById('rewardExpiry').value = '';
+                document.getElementById('rewardEligibility').value = 'all';
+                document.getElementById('rewardDescription').value = '';
+                document.getElementById('rewardStatus').value = 'active';
+                toggleRolesField();
+            }
+        }
+        function hideForm() { formDiv.style.display = 'none'; }
+
+        if (addBtn) addBtn.addEventListener('click', () => showForm(false));
+        if (closeFormBtn) closeFormBtn.addEventListener('click', hideForm);
+        if (cancelFormBtn) cancelFormBtn.addEventListener('click', hideForm);
+
+        // Toggle roles field based on eligibility
+        const eligibilitySelect = document.getElementById('rewardEligibility');
+        const rolesGroup = document.getElementById('rolesSelectGroup');
+        function toggleRolesField() {
+            rolesGroup.style.display = eligibilitySelect.value === 'specific_roles' ? 'block' : 'none';
+        }
+        if (eligibilitySelect) eligibilitySelect.addEventListener('change', toggleRolesField);
+
+        // Save reward (wired in rewards.js)
+        const saveBtn = document.getElementById('saveRewardBtn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => {
+                if (typeof window.saveReward === 'function') {
+                    const rewardData = {
+                        id: document.getElementById('rewardId').value,
+                        name: document.getElementById('rewardName').value,
+                        type: document.getElementById('rewardType').value,
+                        value: parseFloat(document.getElementById('rewardValue').value),
+                        minPurchase: parseFloat(document.getElementById('rewardMinPurchase').value) || 0,
+                        startDate: document.getElementById('rewardStartDate').value,
+                        expiry: document.getElementById('rewardExpiry').value,
+                        eligibility: document.getElementById('rewardEligibility').value,
+                        roles: Array.from(document.getElementById('rewardRoles').selectedOptions).map(opt => opt.value),
+                        description: document.getElementById('rewardDescription').value,
+                        status: document.getElementById('rewardStatus').value
+                    };
+                    window.saveReward(rewardData).then(() => {
+                        hideForm();
+                        if (typeof window.refreshRewardsList === 'function') window.refreshRewardsList();
+                    });
+                } else {
+                    alert('Reward saving will be implemented in rewards.js');
+                    hideForm();
+                }
+            });
+        }
+
+        // View redemptions (called from table)
+        window.viewRedemptions = function(rewardId, rewardName) {
+            if (typeof window.fetchRedemptions === 'function') {
+                window.fetchRedemptions(rewardId, rewardName);
+            } else {
+                alert('Redemption view will be implemented in rewards.js');
+            }
+            document.getElementById('redemptionModal').style.display = 'flex';
+        };
+
+        // Edit reward
+        window.editReward = function(rewardId) {
+            console.log('Edit reward', rewardId);
+            showForm(true);
+            // In real implementation, fetch reward data and populate form
+        };
+
+        // Delete reward
+        window.deleteReward = function(rewardId, rewardName) {
+            document.getElementById('deleteRewardName').innerText = rewardName;
+            document.getElementById('confirmDeleteRewardBtn').dataset.id = rewardId;
+            document.getElementById('deleteRewardModal').style.display = 'flex';
+        };
+        const confirmDelete = document.getElementById('confirmDeleteRewardBtn');
+        if (confirmDelete) {
+            confirmDelete.addEventListener('click', () => {
+                const id = confirmDelete.dataset.id;
+                if (typeof window.deleteRewardById === 'function') {
+                    window.deleteRewardById(id).then(() => {
+                        closeAllModals();
+                        if (typeof window.refreshRewardsList === 'function') window.refreshRewardsList();
+                    });
+                } else {
+                    closeAllModals();
+                    alert('Delete functionality will be implemented in rewards.js');
+                }
+            });
+        }
+
+        // Filters
+        const applyFilters = document.getElementById('applyRewardFilters');
+        const resetFilters = document.getElementById('resetRewardFilters');
+        if (applyFilters) {
+            applyFilters.addEventListener('click', () => {
+                if (typeof window.filterRewards === 'function') {
+                    window.filterRewards({
+                        search: document.getElementById('searchRewards').value,
+                        type: document.getElementById('typeFilter').value,
+                        status: document.getElementById('statusFilter').value
+                    });
+                }
+            });
+        }
+        if (resetFilters) {
+            resetFilters.addEventListener('click', () => {
+                document.getElementById('searchRewards').value = '';
+                document.getElementById('typeFilter').value = 'all';
+                document.getElementById('statusFilter').value = 'all';
+                if (typeof window.filterRewards === 'function') window.filterRewards({});
+            });
+        }
+
+        // Pagination
+        const prevPage = document.getElementById('prevPageRewards');
+        const nextPage = document.getElementById('nextPageRewards');
+        const perPage = document.getElementById('perPageRewards');
+        if (prevPage && nextPage && perPage) {
+            prevPage.addEventListener('click', () => {
+                if (typeof window.changeRewardsPage === 'function') window.changeRewardsPage('prev');
+            });
+            nextPage.addEventListener('click', () => {
+                if (typeof window.changeRewardsPage === 'function') window.changeRewardsPage('next');
+            });
+            perPage.addEventListener('change', () => {
+                if (typeof window.setRewardsPerPage === 'function') window.setRewardsPerPage(parseInt(perPage.value));
+            });
+        }
+
+        // Notify panel ready
+        if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('rewardsPanelReady'));
+        }
+    })();
+</script>

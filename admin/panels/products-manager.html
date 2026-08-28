@@ -1,0 +1,370 @@
+<!-- ==========================================
+     PRODUCTS MANAGER (Admin Panel – HTML Only)
+     - Hierarchical categories
+     - All product fields: title, brand, category, pricing, sold, rating
+     - Video URL, affiliate badges, downloads
+     - Product variants (type, value, image, price) – no stock
+     - Gallery images, affiliate links, specifications, extra fields
+     - Product table with stock column (product‑level stock removed)
+     ========================================== -->
+
+<!-- Font Awesome 6 + Google Fonts -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+
+<style>
+    /* ---------- Dark Theme (same as before) ---------- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #0f0f12; color: #ededee; padding: 2rem; }
+    :root {
+        --bg-primary: #0f0f12; --bg-secondary: #1a1a1f; --bg-tertiary: #25252c;
+        --border-color: #2c2c35; --text-primary: #ededee; --text-secondary: #a1a1aa;
+        --input-bg: #1e1e24; --btn-primary: #3b82f6; --btn-primary-hover: #2563eb;
+        --btn-danger: #ef4444; --btn-danger-hover: #dc2626; --btn-secondary: #3f3f46;
+    }
+    .admin-products-container {
+        max-width: 1400px; margin: 0 auto; background: var(--bg-primary);
+        border-radius: 24px; padding: 1.5rem 2rem; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    .panel-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .panel-header h2 {
+        font-size: 1.75rem; font-weight: 600;
+        background: linear-gradient(135deg, #ffffff, #a5b4fc); -webkit-background-clip: text;
+        background-clip: text; color: transparent;
+    }
+    .btn-primary {
+        background: var(--btn-primary); border: none; padding: 10px 20px; border-radius: 40px;
+        font-weight: 600; color: white; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { background: var(--btn-primary-hover); transform: translateY(-1px); }
+    .btn-secondary {
+        background: var(--btn-secondary); border: none; padding: 8px 16px;
+        border-radius: 8px; color: white; cursor: pointer;
+    }
+    .btn-secondary:hover { background: #52525b; }
+    .btn-danger { background: var(--btn-danger); border: none; padding: 8px 16px; border-radius: 8px; color: white; cursor: pointer; }
+    .btn-danger:hover { background: var(--btn-danger-hover); }
+
+    /* Category Management Boxes */
+    .category-section {
+        display: flex; flex-wrap: wrap; gap: 2rem; margin-bottom: 3rem;
+        background: var(--bg-secondary); border-radius: 20px; padding: 1.5rem;
+    }
+    .admin-box {
+        flex: 1; min-width: 240px; background: var(--bg-tertiary);
+        padding: 1.2rem; border-radius: 20px;
+    }
+    .admin-box h3 { margin-bottom: 1rem; font-size: 1.2rem; }
+    .admin-box select, .admin-box input {
+        width: 100%; margin-bottom: 12px; padding: 8px 12px;
+        background: var(--input-bg); border: 1px solid var(--border-color);
+        border-radius: 12px; color: var(--text-primary);
+    }
+    .admin-box button { width: 100%; }
+
+    /* Filters & Table */
+    .filters-bar {
+        display: flex; justify-content: space-between; gap: 1.5rem;
+        margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .search-wrapper { flex: 2; min-width: 240px; position: relative; }
+    .search-wrapper i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
+    .search-input {
+        width: 100%; padding: 12px 12px 12px 42px; background: var(--input-bg);
+        border: 1px solid var(--border-color); border-radius: 48px;
+        color: var(--text-primary); font-size: 0.9rem; outline: none;
+    }
+    .search-input:focus { border-color: #3b82f6; }
+    .filter-group { display: flex; gap: 12px; flex-wrap: wrap; }
+    .filter-select {
+        background: var(--input-bg); border: 1px solid var(--border-color);
+        color: var(--text-primary); padding: 0 16px; border-radius: 40px;
+        font-size: 0.85rem; cursor: pointer; height: 44px;
+    }
+    .table-responsive { overflow-x: auto; border-radius: 20px; background: var(--bg-secondary); margin-bottom: 1rem; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .data-table th { text-align: left; padding: 1rem 1rem; background: #14141a; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); }
+    .data-table td { padding: 1rem 1rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+    .product-thumb { width: 44px; height: 44px; object-fit: cover; border-radius: 12px; background: #2a2a30; }
+    .product-name-cell { display: flex; align-items: center; gap: 12px; }
+    .status-badge { display: inline-block; padding: 4px 12px; border-radius: 40px; font-size: 0.7rem; font-weight: 600; text-transform: capitalize; }
+    .status-active { background: rgba(16,185,129,0.2); color: #10b981; }
+    .status-inactive { background: rgba(239,68,68,0.2); color: #ef4444; }
+    .stock-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; background: var(--bg-tertiary); }
+    .action-buttons { display: flex; gap: 8px; }
+    .action-btn { background: transparent; border: none; font-size: 1.1rem; cursor: pointer; padding: 6px; border-radius: 8px; width: 32px; }
+    .action-btn.edit { color: #3b82f6; }
+    .action-btn.edit:hover { background: rgba(59,130,246,0.15); }
+    .action-btn.delete { color: #ef4444; }
+    .action-btn.delete:hover { background: rgba(239,68,68,0.15); }
+    .pagination-container { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2rem; }
+    .page-btn { background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px 20px; border-radius: 40px; cursor: pointer; }
+    .page-btn:hover:not(:disabled) { background: #3b82f6; border-color: #3b82f6; }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-info { color: var(--text-secondary); }
+
+    /* Modal (larger for complex product form) */
+    .modal {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 1000;
+        justify-content: center; align-items: center;
+    }
+    .modal-content {
+        background: var(--bg-secondary); border-radius: 28px;
+        max-width: 1000px; width: 90%; max-height: 85vh; overflow-y: auto;
+        border: 1px solid var(--border-color);
+    }
+    .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .modal-close { font-size: 1.8rem; cursor: pointer; color: var(--text-secondary); }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; }
+    .form-row { display: grid; position: relative;grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); }
+    .form-input, .form-group textarea, .form-group select {
+        width: 100%; padding: 10px 14px; background: var(--input-bg);
+        border: 1px solid var(--border-color); border-radius: 12px;
+        color: var(--text-primary); font-family: inherit; font-size: 0.9rem; outline: none;
+    }
+    .form-input:focus { border-color: #3b82f6; }
+    .image-preview-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .image-preview-grid img { width: 70px; height: 70px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border-color); }
+    .dynamic-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
+    .dynamic-row input, .dynamic-row select { flex: 1; min-width: 100px; }
+    .remove-row { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1.2rem; }
+    .btn-icon { background: var(--btn-secondary); border: none; padding: 6px 12px; border-radius: 20px; color: white; cursor: pointer; margin-top: 8px; }
+    .loading-placeholder { text-align: center; padding: 3rem; color: var(--text-secondary); }
+    hr { margin: 1rem 0; border-color: var(--border-color); }
+    @media (max-width: 700px) { body { padding: 1rem; } .admin-products-container { padding: 1rem; } .form-row { grid-template-columns: 1fr; } }
+    
+
+    .preview-item {
+    display: inline-block;
+    position: relative;
+    margin: 5px;
+}
+.preview-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.preview-item button {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.suggestions-box {
+    position: absolute;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    z-index: 1050;
+    width: 100%;
+    max-height: 280px;
+    overflow-y: auto;
+    margin-top: 4px;
+}
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+}
+.suggestion-item:hover {
+    background: var(--bg-secondary);
+}
+.suggestion-item img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.suggestion-item strong {
+    color: var(--text-primary);
+}
+.suggestion-item small {
+    color: var(--text-secondary);
+}
+
+</style>
+
+<div class="admin-products-container">
+    <div class="panel-header">
+        <h2><i class="fas fa-boxes"></i> Products & Deals</h2>
+        <button class="btn-primary" id="addProductBtn"><i class="fas fa-plus"></i> Add Product</button>
+    </div>
+
+    <!-- ========== CATEGORY MANAGEMENT ========== -->
+    <div class="category-section">
+        <div class="admin-box">
+            <h3>📂 Category</h3>
+            <select id="catSelect"><option value="">Select Category</option></select>
+            <input type="text" id="newCategoryName" placeholder="New Category Name">
+            <button id="addCategoryBtn" class="btn-primary">➕ Add Category</button>
+        </div>
+        <div class="admin-box">
+            <h3>📁 Subcategory</h3>
+            <select id="subcatSelect" disabled><option value="">Select Subcategory</option></select>
+            <input type="text" id="newSubcategoryName" placeholder="New Subcategory Name" disabled>
+            <button id="addSubcategoryBtn" class="btn-primary" disabled>➕ Add Subcategory</button>
+        </div>
+        <div class="admin-box">
+            <h3>🗂 Sub‑Subcategory</h3>
+            <select id="subsubcatSelect" disabled><option value="">Select Sub‑Subcategory</option></select>
+            <input type="text" id="newSubsubcategoryName" placeholder="New Sub‑Subcategory Name" disabled>
+            <button id="addSubsubcategoryBtn" class="btn-primary" disabled>➕ Add Sub‑Subcategory</button>
+        </div>
+    </div>
+
+    <!-- ========== FILTERS & SEARCH ========== -->
+    <div class="filters-bar">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchProducts" placeholder="Search by name, category, or ID..." class="search-input">
+        </div>
+        <div class="filter-group">
+            <select id="categoryFilter" class="filter-select"><option value="all">All Categories</option></select>
+            <select id="statusFilter" class="filter-select">
+                <option value="all">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option>
+            </select>
+            <select id="sortBy" class="filter-select">
+                <option value="date_desc">Newest First</option><option value="price_asc">Price Low to High</option><option value="price_desc">Price High to Low</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- ========== PRODUCTS TABLE ========== -->
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr><th>Product</th><th>Category</th><th>Sold</th><th>Price</th><th>Deal Price</th><th>Clicks</th><th>Status</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="productsTableBody">
+                <tr><td colspan="8" class="loading-placeholder">Loading products... <i class="fas fa-spinner fa-pulse"></i></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination-container">
+        <button class="page-btn" id="prevPage" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+        <span class="page-info" id="pageInfo">Page 1 of 1</span>
+        <button class="page-btn" id="nextPage">Next <i class="fas fa-chevron-right"></i></button>
+    </div>
+</div>
+
+<!-- ========== ADD/EDIT PRODUCT MODAL (All Fields – No Stock, No Returns) ========== -->
+<div id="productModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header"><h3 id="modalTitle"><i class="fas fa-plus-circle"></i> Add Product</h3><span class="modal-close">&times;</span></div>
+        <div class="modal-body">
+            <input type="hidden" id="productId">
+            <!-- Basic Info -->
+            <div class="form-row">
+                            <div class="form-group"><label>Product Title *</label>
+                <input type="text" id="productTitle" class="form-input" required autocomplete="off">
+                <div id="titleSuggestions" class="suggestions-box" style="display: none;"></div>
+            </div>
+                <div class="form-group"><label>Brand</label><input type="text" id="productBrand" class="form-input"></div>
+            </div>
+
+            <!-- Category Hierarchy -->
+            <div class="form-row">
+                <div class="form-group"><label>Category *</label><select id="productCategory" class="form-input" required></select></div>
+                <div class="form-group"><label>Subcategory</label><select id="productSubcategory" class="form-input"></select></div>
+                <div class="form-group"><label>Sub‑Subcategory</label><select id="productSubsubcategory" class="form-input"></select></div>
+            </div>
+            <!-- Pricing & Sold -->
+            <div class="form-row">
+                <div class="form-group"><label>Original Price (₹)</label><input type="number" id="productOriginalPrice" class="form-input" step="1"></div>
+                <div class="form-group"><label>Deal Price (₹) *</label><input type="number" id="productPrice" class="form-input" step="1" required></div>
+            </div>
+            <div class="form-group">
+                <div class="form-group"><label>Sold Count</label><input type="number" id="productSold" class="form-input" value="0"></div>
+            </div>
+            <div class="form-group"><button type="button" id="calcDiscountBtn" class="btn-secondary">Calculate Discount</button> <input type="text" id="discountLabel" placeholder="e.g. 40% OFF" class="form-input" style="margin-top:8px;" readonly></div>
+
+            <!-- Video URL -->
+            <div class="form-group"><label>Video URL (YouTube/Vimeo)</label><input type="url" id="productVideoUrl" class="form-input" placeholder="https://www.youtube.com/watch?v=..."></div>
+            
+            <!-- Affiliate Badges (dynamic rows) -->
+            <div class="form-group"><label>Affiliate Badges (e.g., Amazon Verified)</label><div id="affiliateBadgesContainer"></div><button type="button" id="addAffiliateBadgeBtn" class="btn-icon">➕ Add Badge</button></div>
+            
+            <!-- Downloads (dynamic rows) -->
+            <div class="form-group"><label>Downloads (PDF, ZIP, etc.)</label><div id="downloadsContainer"></div><button type="button" id="addDownloadBtn" class="btn-icon">➕ Add Download</button></div>
+            
+            <!-- Tags & Rating -->
+            <div class="form-row">
+                <div class="form-group"><label>Rating (0-5)</label><input type="number" id="productRating" class="form-input" step="0.1" min="0" max="5"></div>
+                <div class="form-group"><label>Tags (comma separated)</label><input type="text" id="productTags" class="form-input" placeholder="trending, new, best-seller"></div>
+            </div>
+            
+            <!-- Images -->
+<div>
+    <label>Main Image</label>
+    <div id="mainImagePreview" class="image-preview-area"></div>
+    <input type="file" id="productMainImage" accept="image/*">
+</div>
+
+<!-- Gallery images preview area -->
+<div>
+    <label>Gallery Images (max 8)</label>
+    <div id="galleryPreviewContainer" class="gallery-preview-area"></div>
+    <input type="file" id="productGallery" accept="image/*" multiple>
+</div>
+            
+            <!-- Affiliate Links (dynamic rows) -->
+            <div class="form-group"><label>Affiliate Links</label><div id="affiliateLinksContainer"></div><button type="button" id="addAffiliateLinkBtn" class="btn-icon">➕ Add Store Link</button></div>
+            
+            <!-- Detailed Specifications (dynamic rows) -->
+            <div class="form-group">
+                <label><i class="fas fa-list-ul"></i> Detailed Specifications</label>
+                <div id="specificationsContainer"></div>
+                <button type="button" id="addSpecificationBtn" class="btn-icon">➕ Add Specification</button>
+            </div>
+            
+            <!-- Extra Fields (dynamic rows) -->
+            <div class="form-group"><label>Extra Fields (e.g., Color, Material)</label><div id="extraFieldsContainer"></div><button type="button" id="addExtraFieldBtn" class="btn-icon">➕ Add Field</button></div>
+            
+            <!-- Description & Status -->
+            <div class="form-group"><label>Description</label><textarea id="productDescription" class="form-input" rows="3"></textarea></div>
+            <div class="form-row">
+                <div class="form-group"><label>Status</label><select id="productStatus" class="form-input"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+            </div>
+        </div>
+        <div class="modal-footer"><button class="btn-secondary modal-cancel">Cancel</button><button class="btn-primary" id="saveProductBtn">Save Product</button></div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteProductModal" class="modal">
+    <div class="modal-content" style="max-width:420px;">
+        <div class="modal-header"><h3><i class="fas fa-exclamation-triangle"></i> Delete Product</h3><span class="modal-close">&times;</span></div>
+        <div class="modal-body"><p>Are you sure you want to delete <strong id="deleteProductName"></strong>?</p><p class="text-danger">⚠️ This will also remove click logs & analytics.</p></div>
+        <div class="modal-footer"><button class="btn-secondary modal-cancel">Cancel</button><button class="btn-danger" id="confirmDeleteProductBtn">Delete Permanently</button></div>
+    </div>
+</div>
+
+<!-- Firebase SDKs (required for JS) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="../assets/js/firebase-config.js"></script> <!-- adjust path if needed -->
+
+<!-- ========== YOUR FULL PRODUCT MANAGER JAVASCRIPT GOES HERE ========== -->
+<!-- Include the complete products-manager.js (variant without stock) here -->

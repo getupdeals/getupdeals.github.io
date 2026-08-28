@@ -1,0 +1,515 @@
+<!-- admin/panels/tags.html -->
+<div class="tags-panel">
+    <div class="panel-header">
+        <h2><i class="fas fa-tags"></i> Tag Management</h2>
+        <button class="btn-primary" id="addTagBtn"><i class="fas fa-plus"></i> Add Tag</button>
+    </div>
+
+    <!-- Add/Edit Tag Form (hidden by default) -->
+    <div id="tagForm" class="tag-form" style="display: none;">
+        <div class="form-header">
+            <h3 id="formTitle"><i class="fas fa-tag"></i> Create Tag</h3>
+            <button class="close-form-btn" id="closeFormBtn">&times;</button>
+        </div>
+        <div class="form-body">
+            <input type="hidden" id="tagId">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tag Name *</label>
+                    <input type="text" id="tagName" class="form-input" placeholder="e.g., Sale, Limited, Best Seller" required>
+                </div>
+                <div class="form-group">
+                    <label>Slug *</label>
+                    <input type="text" id="tagSlug" class="form-input" placeholder="e.g., sale, limited, best-seller" required>
+                    <small class="form-hint">Auto-generated from name, but can be edited</small>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tag Color</label>
+                    <div class="color-picker-wrapper">
+                        <input type="color" id="tagColor" class="color-input" value="#3b82f6">
+                        <span id="colorPreview" class="color-preview" style="background-color: #3b82f6;"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Background Style</label>
+                    <select id="tagStyle" class="form-input">
+                        <option value="solid">Solid</option>
+                        <option value="outline">Outline</option>
+                        <option value="light">Light Background</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description (optional)</label>
+                <textarea id="tagDescription" class="form-input" rows="2" placeholder="Brief description of this tag..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="tagStatus" class="form-input">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button class="btn-secondary" id="cancelFormBtn">Cancel</button>
+            <button class="btn-primary" id="saveTagBtn">Save Tag</button>
+        </div>
+    </div>
+
+    <!-- Filters & Search -->
+    <div class="filters-section">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" id="searchTags" placeholder="Search by name or slug..." class="filter-input">
+            </div>
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="statusFilter" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Sort By</label>
+                <select id="sortTags" class="filter-select">
+                    <option value="name_asc">Name A-Z</option>
+                    <option value="name_desc">Name Z-A</option>
+                    <option value="usage_desc">Most Used</option>
+                    <option value="created_desc">Newest First</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button class="btn-secondary" id="resetTagFilters">Reset</button>
+            <button class="btn-primary" id="applyTagFilters">Apply</button>
+        </div>
+    </div>
+
+    <!-- Tags Table -->
+    <div class="table-responsive">
+        <table class="data-table tags-table">
+            <thead>
+                <tr>
+                    <th>Tag Name</th>
+                    <th>Slug</th>
+                    <th>Color</th>
+                    <th>Usage Count</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tagsTableBody">
+                <tr><td colspan="7" class="loading-placeholder">Loading tags......</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+        <button class="page-btn" id="prevPageTags" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+        <span class="page-info" id="pageInfoTags">Page 1 of 1</span>
+        <button class="page-btn" id="nextPageTags">Next <i class="fas fa-chevron-right"></i></button>
+        <div class="per-page-select">
+            <span>Show</span>
+            <select id="perPageTags">
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="60">60</option>
+            </select>
+            <span>entries</span>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteTagModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle"></i> Delete Tag</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete tag "<strong id="deleteTagName"></strong>"?</p>
+            <p class="text-danger">This will remove the tag from all products. Products using this tag will lose this classification.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-danger" id="confirmDeleteTagBtn">Delete Tag</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.tags-panel {
+    animation: fadeIn 0.3s ease;
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.panel-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.panel-header h2 i {
+    color: #3b82f6;
+    margin-right: 10px;
+}
+.tag-form {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+.form-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+.close-form-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+.close-form-btn:hover {
+    color: #ef4444;
+}
+.form-body {
+    padding: 1.5rem;
+}
+.form-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.color-input {
+    width: 50px;
+    height: 40px;
+    padding: 2px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+.color-preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+.form-hint {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    display: block;
+}
+.filters-section {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.filter-group {
+    flex: 1;
+    min-width: 160px;
+}
+.filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+.filter-input, .filter-select {
+    width: 100%;
+    padding: 8px 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+.filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+.tags-table td {
+    vertical-align: middle;
+}
+.tag-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+.tag-badge.solid {
+    color: white;
+}
+.tag-badge.outline {
+    background: transparent;
+    border: 1px solid currentColor;
+}
+.tag-badge.light {
+    background: rgba(59,130,246,0.15);
+}
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.status-active {
+    background: rgba(16,185,129,0.2);
+    color: #10b981;
+}
+.status-inactive {
+    background: rgba(239,68,68,0.2);
+    color: #ef4444;
+}
+.action-buttons {
+    display: flex;
+    gap: 6px;
+}
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+.action-btn.edit { color: #3b82f6; }
+.action-btn.delete { color: #ef4444; }
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+}
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    .filter-row {
+        flex-direction: column;
+    }
+    .tags-table th, .tags-table td {
+        font-size: 0.7rem;
+        padding: 6px 4px;
+    }
+}
+</style>
+
+<script>
+    (function() {
+        // Modal handlers for delete confirmation
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                if (modal) modal.style.display = 'none';
+            });
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+        });
+
+        // Form show/hide
+        const addBtn = document.getElementById('addTagBtn');
+        const formDiv = document.getElementById('tagForm');
+        const closeFormBtn = document.getElementById('closeFormBtn');
+        const cancelFormBtn = document.getElementById('cancelFormBtn');
+        const saveBtn = document.getElementById('saveTagBtn');
+
+        function showForm(editMode = false) {
+            formDiv.style.display = 'block';
+            if (!editMode) {
+                document.getElementById('formTitle').innerHTML = '<i class="fas fa-tag"></i> Create Tag';
+                document.getElementById('tagId').value = '';
+                document.getElementById('tagName').value = '';
+                document.getElementById('tagSlug').value = '';
+                document.getElementById('tagColor').value = '#3b82f6';
+                document.getElementById('colorPreview').style.backgroundColor = '#3b82f6';
+                document.getElementById('tagStyle').value = 'solid';
+                document.getElementById('tagDescription').value = '';
+                document.getElementById('tagStatus').value = 'active';
+            }
+        }
+        function hideForm() { formDiv.style.display = 'none'; }
+
+        if (addBtn) addBtn.addEventListener('click', () => showForm(false));
+        if (closeFormBtn) closeFormBtn.addEventListener('click', hideForm);
+        if (cancelFormBtn) cancelFormBtn.addEventListener('click', hideForm);
+
+        // Auto-generate slug from name
+        const nameInput = document.getElementById('tagName');
+        const slugInput = document.getElementById('tagSlug');
+        if (nameInput && slugInput) {
+            nameInput.addEventListener('input', function() {
+                if (!slugInput.value || slugInput.value === slugify(nameInput.value) || !slugInput.dataset.auto) {
+                    const slug = slugify(this.value);
+                    slugInput.value = slug;
+                    slugInput.dataset.auto = 'true';
+                }
+            });
+        }
+        function slugify(str) {
+            return str.toString().toLowerCase().trim()
+                .replace(/[\s\W-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        // Color preview
+        const colorPicker = document.getElementById('tagColor');
+        const colorPreview = document.getElementById('colorPreview');
+        if (colorPicker && colorPreview) {
+            colorPicker.addEventListener('input', function() {
+                colorPreview.style.backgroundColor = this.value;
+            });
+        }
+
+        // Save tag (will be wired in tags.js)
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => {
+                if (typeof window.saveTag === 'function') {
+                    const tagData = {
+                        id: document.getElementById('tagId').value,
+                        name: document.getElementById('tagName').value,
+                        slug: document.getElementById('tagSlug').value,
+                        color: document.getElementById('tagColor').value,
+                        style: document.getElementById('tagStyle').value,
+                        description: document.getElementById('tagDescription').value,
+                        status: document.getElementById('tagStatus').value
+                    };
+                    window.saveTag(tagData).then(() => {
+                        hideForm();
+                        if (typeof window.refreshTagsList === 'function') window.refreshTagsList();
+                    });
+                } else {
+                    alert('Tag saving will be implemented in tags.js');
+                    hideForm();
+                }
+            });
+        }
+
+        // Edit tag (called from table)
+        window.editTag = function(tagId) {
+            console.log('Edit tag', tagId);
+            showForm(true);
+            // In real implementation, fetch tag data and populate form
+        };
+
+        // Delete tag
+        window.deleteTag = function(tagId, tagName) {
+            document.getElementById('deleteTagName').innerText = tagName;
+            document.getElementById('confirmDeleteTagBtn').dataset.id = tagId;
+            document.getElementById('deleteTagModal').style.display = 'flex';
+        };
+        const confirmDelete = document.getElementById('confirmDeleteTagBtn');
+        if (confirmDelete) {
+            confirmDelete.addEventListener('click', () => {
+                const id = confirmDelete.dataset.id;
+                if (typeof window.deleteTagById === 'function') {
+                    window.deleteTagById(id).then(() => {
+                        closeAllModals();
+                        if (typeof window.refreshTagsList === 'function') window.refreshTagsList();
+                    });
+                } else {
+                    closeAllModals();
+                    alert('Delete functionality will be implemented in tags.js');
+                }
+            });
+        }
+
+        // Filters
+        const applyFilters = document.getElementById('applyTagFilters');
+        const resetFilters = document.getElementById('resetTagFilters');
+        if (applyFilters) {
+            applyFilters.addEventListener('click', () => {
+                if (typeof window.filterTags === 'function') {
+                    window.filterTags({
+                        search: document.getElementById('searchTags').value,
+                        status: document.getElementById('statusFilter').value,
+                        sort: document.getElementById('sortTags').value
+                    });
+                }
+            });
+        }
+        if (resetFilters) {
+            resetFilters.addEventListener('click', () => {
+                document.getElementById('searchTags').value = '';
+                document.getElementById('statusFilter').value = 'all';
+                document.getElementById('sortTags').value = 'name_asc';
+                if (typeof window.filterTags === 'function') window.filterTags({});
+            });
+        }
+
+        // Pagination
+        const prevPage = document.getElementById('prevPageTags');
+        const nextPage = document.getElementById('nextPageTags');
+        const perPage = document.getElementById('perPageTags');
+        if (prevPage && nextPage && perPage) {
+            prevPage.addEventListener('click', () => {
+                if (typeof window.changeTagsPage === 'function') window.changeTagsPage('prev');
+            });
+            nextPage.addEventListener('click', () => {
+                if (typeof window.changeTagsPage === 'function') window.changeTagsPage('next');
+            });
+            perPage.addEventListener('change', () => {
+                if (typeof window.setTagsPerPage === 'function') window.setTagsPerPage(parseInt(perPage.value));
+            });
+        }
+
+        // Notify panel ready
+        if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('tagsPanelReady'));
+        }
+    })();
+</script>

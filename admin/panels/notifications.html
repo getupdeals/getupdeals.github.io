@@ -1,0 +1,467 @@
+<!-- admin/panels/notifications.html -->
+<div class="notifications-panel">
+    <div class="panel-header">
+        <h2><i class="fas fa-bell"></i> Notifications Manager</h2>
+        <button class="btn-primary" id="createNotificationBtn"><i class="fas fa-plus"></i> New Notification</button>
+    </div>
+
+    <!-- Create/Edit Notification Form (hidden by default) -->
+    <div id="notificationForm" class="notification-form" style="display: none;">
+        <div class="form-header">
+            <h3 id="formTitle"><i class="fas fa-envelope-open-text"></i> Create Notification</h3>
+            <button class="close-form-btn" id="closeFormBtn">&times;</button>
+        </div>
+        <div class="form-body">
+            <input type="hidden" id="notificationId">
+            <div class="form-group">
+                <label>Title *</label>
+                <input type="text" id="notifTitle" class="form-input" placeholder="e.g., Special Deal Alert!">
+            </div>
+            <div class="form-group">
+                <label>Message *</label>
+                <textarea id="notifMessage" class="form-input" rows="3" placeholder="Your notification message..."></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="notifType" class="form-input">
+                        <option value="info">Information</option>
+                        <option value="success">Success</option>
+                        <option value="warning">Warning</option>
+                        <option value="error">Error</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Channel</label>
+                    <select id="notifChannel" class="form-input">
+                        <option value="inapp">In-App Only</option>
+                        <option value="email">Email Only</option>
+                        <option value="both">Both (In-App + Email)</option>
+                        <option value="push">Push Notification</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Target Audience</label>
+                <select id="notifAudience" class="form-input">
+                    <option value="all">All Users</option>
+                    <option value="role">Specific Role</option>
+                    <option value="user">Specific User</option>
+                </select>
+            </div>
+            <div class="form-group" id="roleSelectGroup" style="display: none;">
+                <label>Role</label>
+                <select id="notifRole" class="form-input">
+                    <option value="user">User</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div class="form-group" id="userSelectGroup" style="display: none;">
+                <label>User Email or UID</label>
+                <input type="text" id="notifUser" class="form-input" placeholder="Enter user email or UID">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Schedule (optional)</label>
+                    <input type="datetime-local" id="notifSchedule" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Expiry (optional)</label>
+                    <input type="datetime-local" id="notifExpiry" class="form-input">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Action Link (optional)</label>
+                <input type="url" id="notifLink" class="form-input" placeholder="https://...">
+            </div>
+        </div>
+        <div class="form-footer">
+            <button class="btn-secondary" id="cancelFormBtn">Cancel</button>
+            <button class="btn-primary" id="sendNotificationBtn">Send Notification</button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-section">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="statusFilter" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="sent">Sent</option>
+                    <option value="scheduled">Scheduled</option>
+                    <option value="draft">Draft</option>
+                    <option value="failed">Failed</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Channel</label>
+                <select id="channelFilter" class="filter-select">
+                    <option value="all">All Channels</option>
+                    <option value="inapp">In-App</option>
+                    <option value="email">Email</option>
+                    <option value="push">Push</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" id="searchNotifications" placeholder="Title or message..." class="filter-input">
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button class="btn-secondary" id="resetNotifFilters">Reset</button>
+            <button class="btn-primary" id="applyNotifFilters">Apply</button>
+        </div>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="table-responsive">
+        <table class="data-table notifications-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Message</th>
+                    <th>Audience</th>
+                    <th>Channel</th>
+                    <th>Sent / Scheduled</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="notificationsTableBody">
+                <tr><td colspan="7" class="loading-placeholder">Loading notifications......</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+        <button class="page-btn" id="prevPageNotif" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+        <span class="page-info" id="pageInfoNotif">Page 1 of 1</span>
+        <button class="page-btn" id="nextPageNotif">Next <i class="fas fa-chevron-right"></i></button>
+        <div class="per-page-select">
+            <span>Show</span>
+            <select id="perPageNotif">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+            </select>
+            <span>entries</span>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteNotifModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle"></i> Delete Notification</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete "<strong id="deleteNotifTitle"></strong>"?</p>
+            <p class="text-danger">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-danger" id="confirmDeleteNotifBtn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.notifications-panel {
+    animation: fadeIn 0.3s ease;
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.panel-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.panel-header h2 i {
+    color: #3b82f6;
+    margin-right: 10px;
+}
+.notification-form {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+.form-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+.close-form-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+.close-form-btn:hover {
+    color: #ef4444;
+}
+.form-body {
+    padding: 1.5rem;
+}
+.form-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+.filters-section {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.filter-group {
+    flex: 1;
+    min-width: 160px;
+}
+.filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+.filter-input, .filter-select {
+    width: 100%;
+    padding: 8px 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+.filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+.notifications-table td {
+    vertical-align: middle;
+}
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.status-sent { background: rgba(16,185,129,0.2); color: #10b981; }
+.status-scheduled { background: rgba(59,130,246,0.2); color: #3b82f6; }
+.status-draft { background: rgba(245,158,11,0.2); color: #f59e0b; }
+.status-failed { background: rgba(239,68,68,0.2); color: #ef4444; }
+.action-buttons {
+    display: flex;
+    gap: 6px;
+}
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+.action-btn.edit { color: #3b82f6; }
+.action-btn.delete { color: #ef4444; }
+.action-btn.view { color: #10b981; }
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+}
+@media (max-width: 768px) {
+    .filter-row { flex-direction: column; }
+    .notifications-table th, .notifications-table td { font-size: 0.7rem; padding: 6px 4px; }
+}
+</style>
+
+<script>
+    (function() {
+        // Modal handlers
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                if (modal) modal.style.display = 'none';
+            });
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+        });
+
+        // Form show/hide
+        const createBtn = document.getElementById('createNotificationBtn');
+        const formDiv = document.getElementById('notificationForm');
+        const closeFormBtn = document.getElementById('closeFormBtn');
+        const cancelFormBtn = document.getElementById('cancelFormBtn');
+
+        function showForm(editMode = false) {
+            formDiv.style.display = 'block';
+            if (!editMode) {
+                document.getElementById('formTitle').innerHTML = '<i class="fas fa-envelope-open-text"></i> Create Notification';
+                document.getElementById('notificationId').value = '';
+                document.getElementById('notifTitle').value = '';
+                document.getElementById('notifMessage').value = '';
+                document.getElementById('notifType').value = 'info';
+                document.getElementById('notifChannel').value = 'inapp';
+                document.getElementById('notifAudience').value = 'all';
+                document.getElementById('notifRole').value = 'user';
+                document.getElementById('notifUser').value = '';
+                document.getElementById('notifSchedule').value = '';
+                document.getElementById('notifExpiry').value = '';
+                document.getElementById('notifLink').value = '';
+                toggleAudienceFields();
+            }
+        }
+        function hideForm() { formDiv.style.display = 'none'; }
+
+        if (createBtn) createBtn.addEventListener('click', () => showForm(false));
+        if (closeFormBtn) closeFormBtn.addEventListener('click', hideForm);
+        if (cancelFormBtn) cancelFormBtn.addEventListener('click', hideForm);
+
+        // Audience field toggle
+        const audienceSelect = document.getElementById('notifAudience');
+        const roleGroup = document.getElementById('roleSelectGroup');
+        const userGroup = document.getElementById('userSelectGroup');
+        function toggleAudienceFields() {
+            const val = audienceSelect.value;
+            roleGroup.style.display = val === 'role' ? 'block' : 'none';
+            userGroup.style.display = val === 'user' ? 'block' : 'none';
+        }
+        if (audienceSelect) audienceSelect.addEventListener('change', toggleAudienceFields);
+
+        // Send notification button (will be wired in notifications.js)
+        const sendBtn = document.getElementById('sendNotificationBtn');
+        if (sendBtn) {
+            sendBtn.addEventListener('click', () => {
+                if (typeof window.sendNotification === 'function') {
+                    const data = {
+                        id: document.getElementById('notificationId').value,
+                        title: document.getElementById('notifTitle').value,
+                        message: document.getElementById('notifMessage').value,
+                        type: document.getElementById('notifType').value,
+                        channel: document.getElementById('notifChannel').value,
+                        audience: document.getElementById('notifAudience').value,
+                        role: document.getElementById('notifRole').value,
+                        targetUser: document.getElementById('notifUser').value,
+                        schedule: document.getElementById('notifSchedule').value,
+                        expiry: document.getElementById('notifExpiry').value,
+                        link: document.getElementById('notifLink').value
+                    };
+                    window.sendNotification(data).then(() => hideForm());
+                } else {
+                    alert('Notification sending will be implemented in notifications.js');
+                }
+            });
+        }
+
+        // Edit notification placeholder (called from table)
+        window.editNotification = function(notifId) {
+            console.log('Edit notification', notifId);
+            showForm(true);
+            // In real implementation, fetch notification data and populate form
+        };
+        window.deleteNotification = function(notifId, title) {
+            document.getElementById('deleteNotifTitle').innerText = title;
+            document.getElementById('confirmDeleteNotifBtn').dataset.id = notifId;
+            document.getElementById('deleteNotifModal').style.display = 'flex';
+        };
+        const confirmDelete = document.getElementById('confirmDeleteNotifBtn');
+        if (confirmDelete) {
+            confirmDelete.addEventListener('click', () => {
+                const id = confirmDelete.dataset.id;
+                if (typeof window.deleteNotificationById === 'function') {
+                    window.deleteNotificationById(id).then(() => {
+                        closeAllModals();
+                        if (typeof window.refreshNotificationsList === 'function') window.refreshNotificationsList();
+                    });
+                } else {
+                    closeAllModals();
+                    alert('Delete functionality will be implemented in notifications.js');
+                }
+            });
+        }
+
+        // Filter apply/reset
+        const applyFilters = document.getElementById('applyNotifFilters');
+        const resetFilters = document.getElementById('resetNotifFilters');
+        if (applyFilters) {
+            applyFilters.addEventListener('click', () => {
+                if (typeof window.filterNotifications === 'function') {
+                    window.filterNotifications({
+                        status: document.getElementById('statusFilter').value,
+                        channel: document.getElementById('channelFilter').value,
+                        search: document.getElementById('searchNotifications').value
+                    });
+                }
+            });
+        }
+        if (resetFilters) {
+            resetFilters.addEventListener('click', () => {
+                document.getElementById('statusFilter').value = 'all';
+                document.getElementById('channelFilter').value = 'all';
+                document.getElementById('searchNotifications').value = '';
+                if (typeof window.filterNotifications === 'function') window.filterNotifications({});
+            });
+        }
+
+        // Pagination
+        const prevPage = document.getElementById('prevPageNotif');
+        const nextPage = document.getElementById('nextPageNotif');
+        const perPage = document.getElementById('perPageNotif');
+        if (prevPage && nextPage && perPage) {
+            prevPage.addEventListener('click', () => {
+                if (typeof window.changeNotifPage === 'function') window.changeNotifPage('prev');
+            });
+            nextPage.addEventListener('click', () => {
+                if (typeof window.changeNotifPage === 'function') window.changeNotifPage('next');
+            });
+            perPage.addEventListener('change', () => {
+                if (typeof window.setNotifPerPage === 'function') window.setNotifPerPage(parseInt(perPage.value));
+            });
+        }
+
+        // Notify panel ready
+        if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('notificationsPanelReady'));
+        }
+    })();
+</script>

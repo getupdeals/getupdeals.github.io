@@ -1,0 +1,399 @@
+<!-- admin/panels/referrals.html -->
+<div class="referrals-panel">
+    <div class="panel-header">
+        <h2><i class="fas fa-link"></i> Referral System</h2>
+        <button class="btn-primary" id="editReferralSettingsBtn"><i class="fas fa-cog"></i> Program Settings</button>
+    </div>
+
+    <!-- Key Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-details">
+                <span class="stat-label">Total Referrals</span>
+                <span class="stat-value" id="totalReferrals">—</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+            <div class="stat-details">
+                <span class="stat-label">Active Referrers</span>
+                <span class="stat-value" id="activeReferrers">—</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="stat-details">
+                <span class="stat-label">Total Commission Paid</span>
+                <span class="stat-value" id="totalCommission">—</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-details">
+                <span class="stat-label">Conversion Rate</span>
+                <span class="stat-value" id="referralConversion">—</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Referral Settings Modal (hidden by default) -->
+    <div id="referralSettingsModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-sliders-h"></i> Referral Program Settings</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Commission Type</label>
+                    <select id="commissionType" class="form-input">
+                        <option value="percentage">Percentage (%)</option>
+                        <option value="fixed">Fixed Amount ($)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Commission Value</label>
+                    <input type="number" id="commissionValue" class="form-input" step="0.01" placeholder="e.g., 10 or 10%">
+                </div>
+                <div class="form-group">
+                    <label>Minimum Payout ($)</label>
+                    <input type="number" id="minPayout" class="form-input" step="0.01" placeholder="50.00">
+                </div>
+                <div class="form-group">
+                    <label>Referral Cookie Duration (days)</label>
+                    <input type="number" id="cookieDuration" class="form-input" placeholder="30">
+                </div>
+                <div class="form-group">
+                    <label>Bonus for Referrer (on signup)</label>
+                    <input type="number" id="signupBonus" class="form-input" step="0.01" placeholder="5.00">
+                </div>
+                <div class="form-group">
+                    <label>Bonus for Referee (on signup)</label>
+                    <input type="number" id="refereeBonus" class="form-input" step="0.01" placeholder="5.00">
+                </div>
+                <div class="form-group">
+                    <label>Program Status</label>
+                    <select id="programStatus" class="form-input">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary modal-cancel">Cancel</button>
+                <button class="btn-primary" id="saveReferralSettings">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Referrers Leaderboard -->
+    <div class="leaderboard-section">
+        <div class="card-header">
+            <h3><i class="fas fa-trophy"></i> Top Referrers</h3>
+            <select id="topReferrersLimit" class="limit-select">
+                <option value="5">Top 5</option>
+                <option value="10">Top 10</option>
+                <option value="20">Top 20</option>
+            </select>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table leaderboard-table">
+                <thead>
+                    <tr><th>Rank</th><th>User</th><th>Total Referrals</th><th>Commission Earned</th><th>Conversion Rate</th></tr>
+                </thead>
+                <tbody id="topReferrersTable">
+                    <tr><td colspan="5" class="loading-placeholder">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Referrals Table -->
+    <div class="recent-section">
+        <div class="card-header">
+            <h3><i class="fas fa-clock"></i> Recent Referrals</h3>
+            <div class="filter-group inline">
+                <input type="text" id="searchReferrals" placeholder="Search referrer or referee..." class="filter-input" style="width: 200px;">
+                <button class="btn-primary" id="searchReferralsBtn">Search</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table referrals-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Referrer</th>
+                        <th>Referee</th>
+                        <th>Commission</th>
+                        <th>Status</th>
+                        <th>Order Value</th>
+                    </tr>
+                </thead>
+                <tbody id="recentReferralsTable">
+                    <tr><td colspan="6" class="loading-placeholder">Loading referrals...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-container">
+            <button class="page-btn" id="prevReferralsPage" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+            <span class="page-info" id="referralsPageInfo">Page 1 of 1</span>
+            <button class="page-btn" id="nextReferralsPage">Next <i class="fas fa-chevron-right"></i></button>
+            <div class="per-page-select">
+                <span>Show</span>
+                <select id="referralsPerPage">
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                </select>
+                <span>entries</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.referrals-panel {
+    animation: fadeIn 0.3s ease;
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.panel-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.panel-header h2 i {
+    color: #3b82f6;
+    margin-right: 10px;
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+.stat-card {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid var(--border-color);
+}
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(59,130,246,0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #3b82f6;
+}
+.stat-details {
+    flex: 1;
+}
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    display: block;
+}
+.stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+.leaderboard-section, .recent-section {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+.limit-select, .filter-input {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+.leaderboard-table th, .leaderboard-table td,
+.referrals-table th, .referrals-table td {
+    font-size: 0.85rem;
+    padding: 12px 8px;
+}
+.rank-badge {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: bold;
+}
+.rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
+.rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); color: white; }
+.rank-3 { background: linear-gradient(135deg, #cd7f32, #b45309); color: white; }
+.status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.status-pending { background: rgba(245,158,11,0.2); color: #f59e0b; }
+.status-completed { background: rgba(16,185,129,0.2); color: #10b981; }
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    flex-wrap: wrap;
+}
+.inline {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    .card-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .inline {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+    (function() {
+        // Modal handlers
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                if (modal) modal.style.display = 'none';
+            });
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+        });
+
+        // Referral settings modal
+        const settingsBtn = document.getElementById('editReferralSettingsBtn');
+        const settingsModal = document.getElementById('referralSettingsModal');
+        const saveSettingsBtn = document.getElementById('saveReferralSettings');
+
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', () => {
+                if (typeof window.loadReferralSettings === 'function') {
+                    window.loadReferralSettings().then(settings => {
+                        document.getElementById('commissionType').value = settings.commissionType || 'percentage';
+                        document.getElementById('commissionValue').value = settings.commissionValue || 10;
+                        document.getElementById('minPayout').value = settings.minPayout || 50;
+                        document.getElementById('cookieDuration').value = settings.cookieDuration || 30;
+                        document.getElementById('signupBonus').value = settings.signupBonus || 5;
+                        document.getElementById('refereeBonus').value = settings.refereeBonus || 5;
+                        document.getElementById('programStatus').value = settings.status || 'active';
+                    });
+                }
+                settingsModal.style.display = 'flex';
+            });
+        }
+
+        if (saveSettingsBtn) {
+            saveSettingsBtn.addEventListener('click', () => {
+                const settings = {
+                    commissionType: document.getElementById('commissionType').value,
+                    commissionValue: parseFloat(document.getElementById('commissionValue').value),
+                    minPayout: parseFloat(document.getElementById('minPayout').value),
+                    cookieDuration: parseInt(document.getElementById('cookieDuration').value),
+                    signupBonus: parseFloat(document.getElementById('signupBonus').value),
+                    refereeBonus: parseFloat(document.getElementById('refereeBonus').value),
+                    status: document.getElementById('programStatus').value
+                };
+                if (typeof window.saveReferralSettings === 'function') {
+                    window.saveReferralSettings(settings).then(() => closeAllModals());
+                } else {
+                    alert('Save function not implemented in referrals.js');
+                    closeAllModals();
+                }
+            });
+        }
+
+        // Top referrers limit change
+        const limitSelect = document.getElementById('topReferrersLimit');
+        if (limitSelect) {
+            limitSelect.addEventListener('change', () => {
+                if (typeof window.loadTopReferrers === 'function') {
+                    window.loadTopReferrers(parseInt(limitSelect.value));
+                }
+            });
+        }
+
+        // Search referrals
+        const searchBtn = document.getElementById('searchReferralsBtn');
+        if (searchBtn) {
+            searchBtn.addEventListener('click', () => {
+                const query = document.getElementById('searchReferrals').value;
+                if (typeof window.searchReferrals === 'function') {
+                    window.searchReferrals(query);
+                }
+            });
+        }
+
+        // Pagination for referrals
+        const prevPage = document.getElementById('prevReferralsPage');
+        const nextPage = document.getElementById('nextReferralsPage');
+        const perPage = document.getElementById('referralsPerPage');
+        if (prevPage && nextPage && perPage) {
+            prevPage.addEventListener('click', () => {
+                if (typeof window.changeReferralsPage === 'function') window.changeReferralsPage('prev');
+            });
+            nextPage.addEventListener('click', () => {
+                if (typeof window.changeReferralsPage === 'function') window.changeReferralsPage('next');
+            });
+            perPage.addEventListener('change', () => {
+                if (typeof window.setReferralsPerPage === 'function') window.setReferralsPerPage(parseInt(perPage.value));
+            });
+        }
+
+        // Notify panel ready
+        if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('referralsPanelReady'));
+        }
+    })();
+</script>

@@ -1,0 +1,615 @@
+<!-- admin/panels/settings.html -->
+<div class="settings-panel">
+    <div class="panel-header">
+        <h2><i class="fas fa-cog"></i> System Settings</h2>
+        <button class="btn-primary" id="saveAllSettingsBtn"><i class="fas fa-save"></i> Save All Changes</button>
+    </div>
+
+    <!-- Settings Tabs -->
+    <div class="settings-tabs">
+        <button class="tab-btn active" data-tab="general">General</button>
+        <button class="tab-btn" data-tab="commission">Commission</button>
+        <button class="tab-btn" data-tab="payment">Payment</button>
+        <button class="tab-btn" data-tab="email">Email</button>
+        <button class="tab-btn" data-tab="seo">SEO & Social</button>
+        <button class="tab-btn" data-tab="security">Security</button>
+        <button class="tab-btn" data-tab="integrations">Integrations</button>
+    </div>
+
+    <!-- Tab Content: General -->
+    <div id="tab-general" class="tab-content active">
+        <div class="settings-card">
+            <h3>Site Information</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Site Name</label>
+                    <input type="text" id="siteName" class="form-input" placeholder="GetUpDeals">
+                </div>
+                <div class="form-group">
+                    <label>Site Tagline</label>
+                    <input type="text" id="siteTagline" class="form-input" placeholder="Best E-commerce Deals">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Site Description</label>
+                <textarea id="siteDescription" class="form-input" rows="2" placeholder="Site meta description..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Contact Email</label>
+                <input type="email" id="contactEmail" class="form-input" placeholder="admin@getupdeals.com">
+            </div>
+            <div class="form-group">
+                <label>Timezone</label>
+                <select id="timezone" class="form-input">
+                    <option value="America/New_York">Eastern Time</option>
+                    <option value="America/Chicago">Central Time</option>
+                    <option value="America/Denver">Mountain Time</option>
+                    <option value="America/Los_Angeles">Pacific Time</option>
+                    <option value="UTC">UTC</option>
+                    <option value="Asia/Kolkata">India (IST)</option>
+                    <option value="Europe/London">London (GMT)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Currency</label>
+                <select id="currency" class="form-input">
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="INR">INR (₹)</option>
+                    <option value="CAD">CAD ($)</option>
+                    <option value="AUD">AUD ($)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Site Logo URL</label>
+                <input type="url" id="siteLogo" class="form-input" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Favicon URL</label>
+                <input type="url" id="favicon" class="form-input" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Maintenance Mode</label>
+                <select id="maintenanceMode" class="form-input">
+                    <option value="0">Disabled</option>
+                    <option value="1">Enabled</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Commission -->
+    <div id="tab-commission" class="tab-content">
+        <div class="settings-card">
+            <h3>Commission Settings</h3>
+            <div class="form-group">
+                <label>Default Commission Rate (%)</label>
+                <input type="number" id="defaultCommission" class="form-input" step="0.1" placeholder="10">
+            </div>
+            <div class="form-group">
+                <label>Tiered Commission</label>
+                <select id="tieredCommissionEnabled" class="form-input">
+                    <option value="0">Disabled</option>
+                    <option value="1">Enabled</option>
+                </select>
+            </div>
+            <div id="tieredCommissionSettings" style="display: none;">
+                <div class="form-group">
+                    <label>Tier 1 (100+ sales) - Rate (%)</label>
+                    <input type="number" id="tier1Rate" class="form-input" step="0.1" placeholder="12">
+                </div>
+                <div class="form-group">
+                    <label>Tier 2 (500+ sales) - Rate (%)</label>
+                    <input type="number" id="tier2Rate" class="form-input" step="0.1" placeholder="15">
+                </div>
+                <div class="form-group">
+                    <label>Tier 3 (1000+ sales) - Rate (%)</label>
+                    <input type="number" id="tier3Rate" class="form-input" step="0.1" placeholder="20">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Commission on First Purchase Only</label>
+                <select id="firstPurchaseOnly" class="form-input">
+                    <option value="0">No (all purchases)</option>
+                    <option value="1">Yes (first purchase only)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Cookie Duration (days)</label>
+                <input type="number" id="cookieDuration" class="form-input" placeholder="30">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Payment -->
+    <div id="tab-payment" class="tab-content">
+        <div class="settings-card">
+            <h3>Payment Gateway Settings</h3>
+            <div class="form-group">
+                <label>Default Payment Method</label>
+                <select id="defaultPaymentMethod" class="form-input">
+                    <option value="paypal">PayPal</option>
+                    <option value="bank">Bank Transfer</option>
+                    <option value="upi">UPI</option>
+                    <option value="crypto">Cryptocurrency</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>PayPal Email</label>
+                <input type="email" id="paypalEmail" class="form-input" placeholder="payments@getupdeals.com">
+            </div>
+            <div class="form-group">
+                <label>Minimum Withdrawal Amount ($)</label>
+                <input type="number" id="minWithdrawal" class="form-input" step="0.01" placeholder="50">
+            </div>
+            <div class="form-group">
+                <label>Maximum Withdrawal Amount ($)</label>
+                <input type="number" id="maxWithdrawal" class="form-input" step="0.01" placeholder="1000">
+            </div>
+            <div class="form-group">
+                <label>Withdrawal Processing Fee (%)</label>
+                <input type="number" id="withdrawalFee" class="form-input" step="0.1" placeholder="0">
+            </div>
+            <div class="form-group">
+                <label>Auto-Approve Withdrawals (below amount)</label>
+                <input type="number" id="autoApproveAmount" class="form-input" step="0.01" placeholder="0 (disabled)">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Email -->
+    <div id="tab-email" class="tab-content">
+        <div class="settings-card">
+            <h3>Email Configuration</h3>
+            <div class="form-group">
+                <label>SMTP Host</label>
+                <input type="text" id="smtpHost" class="form-input" placeholder="smtp.gmail.com">
+            </div>
+            <div class="form-group">
+                <label>SMTP Port</label>
+                <input type="number" id="smtpPort" class="form-input" placeholder="587">
+            </div>
+            <div class="form-group">
+                <label>SMTP Username</label>
+                <input type="text" id="smtpUser" class="form-input" placeholder="admin@getupdeals.com">
+            </div>
+            <div class="form-group">
+                <label>SMTP Password</label>
+                <input type="password" id="smtpPass" class="form-input" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label>Encryption</label>
+                <select id="smtpEncryption" class="form-input">
+                    <option value="tls">TLS</option>
+                    <option value="ssl">SSL</option>
+                    <option value="none">None</option>
+                </select>
+            </div>
+            <hr>
+            <h3>Email Templates</h3>
+            <div class="form-group">
+                <label>Welcome Email Subject</label>
+                <input type="text" id="welcomeSubject" class="form-input" placeholder="Welcome to GetUpDeals!">
+            </div>
+            <div class="form-group">
+                <label>Welcome Email Body</label>
+                <textarea id="welcomeBody" class="form-input" rows="3" placeholder="HTML or text..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Withdrawal Approved Subject</label>
+                <input type="text" id="withdrawalApprovedSubject" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>Withdrawal Rejected Subject</label>
+                <input type="text" id="withdrawalRejectedSubject" class="form-input">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: SEO & Social -->
+    <div id="tab-seo" class="tab-content">
+        <div class="settings-card">
+            <h3>SEO Settings</h3>
+            <div class="form-group">
+                <label>Meta Keywords (comma separated)</label>
+                <input type="text" id="metaKeywords" class="form-input" placeholder="deals, coupons, discounts">
+            </div>
+            <div class="form-group">
+                <label>Google Analytics ID</label>
+                <input type="text" id="googleAnalytics" class="form-input" placeholder="UA-XXXXX-X or G-XXXXXX">
+            </div>
+            <div class="form-group">
+                <label>Google Search Console Verification</label>
+                <input type="text" id="searchConsole" class="form-input" placeholder="verification code">
+            </div>
+            <div class="form-group">
+                <label>Robots.txt Custom Rules</label>
+                <textarea id="robotsTxt" class="form-input" rows="3" placeholder="User-agent: *\nDisallow: /admin/"></textarea>
+            </div>
+            <hr>
+            <h3>Social Media Links</h3>
+            <div class="form-group">
+                <label>Facebook URL</label>
+                <input type="url" id="facebookUrl" class="form-input" placeholder="https://facebook.com/...">
+            </div>
+            <div class="form-group">
+                <label>Twitter URL</label>
+                <input type="url" id="twitterUrl" class="form-input" placeholder="https://twitter.com/...">
+            </div>
+            <div class="form-group">
+                <label>Instagram URL</label>
+                <input type="url" id="instagramUrl" class="form-input" placeholder="https://instagram.com/...">
+            </div>
+            <div class="form-group">
+                <label>LinkedIn URL</label>
+                <input type="url" id="linkedinUrl" class="form-input" placeholder="https://linkedin.com/...">
+            </div>
+            <div class="form-group">
+                <label>Telegram Channel</label>
+                <input type="text" id="telegramChannel" class="form-input" placeholder="@getupdeals">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Security -->
+    <div id="tab-security" class="tab-content">
+        <div class="settings-card">
+            <h3>Security Settings</h3>
+            <div class="form-group">
+                <label>Two-Factor Authentication (Admin)</label>
+                <select id="admin2fa" class="form-input">
+                    <option value="0">Disabled</option>
+                    <option value="1">Enabled</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Max Login Attempts</label>
+                <input type="number" id="maxLoginAttempts" class="form-input" placeholder="5">
+            </div>
+            <div class="form-group">
+                <label>Login Lockout Time (minutes)</label>
+                <input type="number" id="lockoutTime" class="form-input" placeholder="15">
+            </div>
+            <div class="form-group">
+                <label>Session Timeout (minutes)</label>
+                <input type="number" id="sessionTimeout" class="form-input" placeholder="60">
+            </div>
+            <div class="form-group">
+                <label>Allowed IPs (comma separated, empty = all)</label>
+                <input type="text" id="allowedIps" class="form-input" placeholder="192.168.1.1, 10.0.0.1">
+            </div>
+            <div class="form-group">
+                <label>Log All Admin Actions</label>
+                <select id="logAdminActions" class="form-input">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <hr>
+            <h3>Data Privacy</h3>
+            <div class="form-group">
+                <label>Cookie Consent Enabled</label>
+                <select id="cookieConsent" class="form-input">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Privacy Policy URL</label>
+                <input type="url" id="privacyPolicyUrl" class="form-input" placeholder="/privacy">
+            </div>
+            <div class="form-group">
+                <label>Terms of Service URL</label>
+                <input type="url" id="termsUrl" class="form-input" placeholder="/terms">
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Integrations -->
+    <div id="tab-integrations" class="tab-content">
+        <div class="settings-card">
+            <h3>Affiliate Networks API</h3>
+            <div class="form-group">
+                <label>ShareASale API Token</label>
+                <input type="text" id="shareasaleToken" class="form-input" placeholder="••••••">
+            </div>
+            <div class="form-group">
+                <label>Rakuten API Key</label>
+                <input type="text" id="rakutenKey" class="form-input" placeholder="••••••">
+            </div>
+            <div class="form-group">
+                <label>Amazon Access Key ID</label>
+                <input type="text" id="amazonAccessKey" class="form-input" placeholder="AKIA...">
+            </div>
+            <div class="form-group">
+                <label>Amazon Secret Key</label>
+                <input type="password" id="amazonSecretKey" class="form-input" placeholder="••••••">
+            </div>
+            <div class="form-group">
+                <label>Amazon Associate Tag</label>
+                <input type="text" id="amazonTag" class="form-input" placeholder="getupdeals-20">
+            </div>
+            <hr>
+            <h3>Push Notifications</h3>
+            <div class="form-group">
+                <label>Firebase Cloud Messaging Sender ID</label>
+                <input type="text" id="fcmSenderId" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>FCM Server Key</label>
+                <input type="password" id="fcmServerKey" class="form-input">
+            </div>
+            <hr>
+            <h3>reCAPTCHA</h3>
+            <div class="form-group">
+                <label>reCAPTCHA Site Key</label>
+                <input type="text" id="recaptchaSiteKey" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>reCAPTCHA Secret Key</label>
+                <input type="password" id="recaptchaSecretKey" class="form-input">
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Notification Toast -->
+    <div id="saveToast" class="toast" style="display: none;">Settings saved successfully!</div>
+</div>
+
+<style>
+.settings-panel {
+    animation: fadeIn 0.3s ease;
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.panel-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.panel-header h2 i {
+    color: #3b82f6;
+    margin-right: 10px;
+}
+.settings-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+.tab-btn:hover {
+    background: var(--hover-bg);
+}
+.tab-btn.active {
+    background: #3b82f6;
+    color: white;
+}
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+.settings-card {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+.settings-card h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+.settings-card hr {
+    margin: 1rem 0;
+    border-color: var(--border-color);
+}
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.form-group {
+    margin-bottom: 1rem;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+.form-input, .form-select {
+    width: 100%;
+    padding: 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+.form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #10b981;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+}
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    .settings-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+    }
+}
+</style>
+
+<script>
+    (function() {
+        // Tab switching
+        const tabs = document.querySelectorAll('.tab-btn');
+        const contents = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.dataset.tab;
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(`tab-${tabId}`).classList.add('active');
+            });
+        });
+
+        // Toggle tiered commission settings
+        const tieredToggle = document.getElementById('tieredCommissionEnabled');
+        const tieredDiv = document.getElementById('tieredCommissionSettings');
+        if (tieredToggle) {
+            tieredToggle.addEventListener('change', () => {
+                tieredDiv.style.display = tieredToggle.value === '1' ? 'block' : 'none';
+            });
+        }
+
+        // Save all settings
+        const saveBtn = document.getElementById('saveAllSettingsBtn');
+        const toast = document.getElementById('saveToast');
+        function showToast(message) {
+            toast.innerText = message || 'Settings saved successfully!';
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => {
+                // Collect all settings from all tabs
+                const settings = {
+                    general: {
+                        siteName: document.getElementById('siteName')?.value,
+                        siteTagline: document.getElementById('siteTagline')?.value,
+                        siteDescription: document.getElementById('siteDescription')?.value,
+                        contactEmail: document.getElementById('contactEmail')?.value,
+                        timezone: document.getElementById('timezone')?.value,
+                        currency: document.getElementById('currency')?.value,
+                        siteLogo: document.getElementById('siteLogo')?.value,
+                        favicon: document.getElementById('favicon')?.value,
+                        maintenanceMode: document.getElementById('maintenanceMode')?.value === '1'
+                    },
+                    commission: {
+                        defaultRate: parseFloat(document.getElementById('defaultCommission')?.value),
+                        tieredEnabled: document.getElementById('tieredCommissionEnabled')?.value === '1',
+                        tier1Rate: parseFloat(document.getElementById('tier1Rate')?.value),
+                        tier2Rate: parseFloat(document.getElementById('tier2Rate')?.value),
+                        tier3Rate: parseFloat(document.getElementById('tier3Rate')?.value),
+                        firstPurchaseOnly: document.getElementById('firstPurchaseOnly')?.value === '1',
+                        cookieDuration: parseInt(document.getElementById('cookieDuration')?.value)
+                    },
+                    payment: {
+                        defaultMethod: document.getElementById('defaultPaymentMethod')?.value,
+                        paypalEmail: document.getElementById('paypalEmail')?.value,
+                        minWithdrawal: parseFloat(document.getElementById('minWithdrawal')?.value),
+                        maxWithdrawal: parseFloat(document.getElementById('maxWithdrawal')?.value),
+                        withdrawalFee: parseFloat(document.getElementById('withdrawalFee')?.value),
+                        autoApproveAmount: parseFloat(document.getElementById('autoApproveAmount')?.value)
+                    },
+                    email: {
+                        smtpHost: document.getElementById('smtpHost')?.value,
+                        smtpPort: parseInt(document.getElementById('smtpPort')?.value),
+                        smtpUser: document.getElementById('smtpUser')?.value,
+                        smtpPass: document.getElementById('smtpPass')?.value,
+                        smtpEncryption: document.getElementById('smtpEncryption')?.value,
+                        welcomeSubject: document.getElementById('welcomeSubject')?.value,
+                        welcomeBody: document.getElementById('welcomeBody')?.value,
+                        withdrawalApprovedSubject: document.getElementById('withdrawalApprovedSubject')?.value,
+                        withdrawalRejectedSubject: document.getElementById('withdrawalRejectedSubject')?.value
+                    },
+                    seo: {
+                        metaKeywords: document.getElementById('metaKeywords')?.value,
+                        googleAnalytics: document.getElementById('googleAnalytics')?.value,
+                        searchConsole: document.getElementById('searchConsole')?.value,
+                        robotsTxt: document.getElementById('robotsTxt')?.value,
+                        facebookUrl: document.getElementById('facebookUrl')?.value,
+                        twitterUrl: document.getElementById('twitterUrl')?.value,
+                        instagramUrl: document.getElementById('instagramUrl')?.value,
+                        linkedinUrl: document.getElementById('linkedinUrl')?.value,
+                        telegramChannel: document.getElementById('telegramChannel')?.value
+                    },
+                    security: {
+                        admin2fa: document.getElementById('admin2fa')?.value === '1',
+                        maxLoginAttempts: parseInt(document.getElementById('maxLoginAttempts')?.value),
+                        lockoutTime: parseInt(document.getElementById('lockoutTime')?.value),
+                        sessionTimeout: parseInt(document.getElementById('sessionTimeout')?.value),
+                        allowedIps: document.getElementById('allowedIps')?.value,
+                        logAdminActions: document.getElementById('logAdminActions')?.value === '1',
+                        cookieConsent: document.getElementById('cookieConsent')?.value === '1',
+                        privacyPolicyUrl: document.getElementById('privacyPolicyUrl')?.value,
+                        termsUrl: document.getElementById('termsUrl')?.value
+                    },
+                    integrations: {
+                        shareasaleToken: document.getElementById('shareasaleToken')?.value,
+                        rakutenKey: document.getElementById('rakutenKey')?.value,
+                        amazonAccessKey: document.getElementById('amazonAccessKey')?.value,
+                        amazonSecretKey: document.getElementById('amazonSecretKey')?.value,
+                        amazonTag: document.getElementById('amazonTag')?.value,
+                        fcmSenderId: document.getElementById('fcmSenderId')?.value,
+                        fcmServerKey: document.getElementById('fcmServerKey')?.value,
+                        recaptchaSiteKey: document.getElementById('recaptchaSiteKey')?.value,
+                        recaptchaSecretKey: document.getElementById('recaptchaSecretKey')?.value
+                    }
+                };
+                if (typeof window.saveAllSettings === 'function') {
+                    window.saveAllSettings(settings).then(() => showToast());
+                } else {
+                    console.log('Settings data:', settings);
+                    showToast('Settings saved (demo mode)');
+                }
+            });
+        }
+
+        // Load settings from backend (will be implemented in settings.js)
+        if (typeof window.loadAllSettings === 'function') {
+            window.loadAllSettings().then(settings => {
+                // Populate fields (implementation in settings.js)
+            });
+        }
+
+        // Notify panel ready
+        if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('settingsPanelReady'));
+        }
+    })();
+</script>

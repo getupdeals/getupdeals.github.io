@@ -1,0 +1,453 @@
+<!-- admin/panels/cashback.html -->
+<div class="cashback-panel">
+    <div class="panel-header">
+        <h2><i class="fas fa-percent"></i> Cashback Management</h2>
+        <button class="btn-primary" id="manualCashbackBtn"><i class="fas fa-hand-holding-usd"></i> Manual Cashback</button>
+    </div>
+
+    <!-- Global Settings Card -->
+    <div class="settings-card">
+        <div class="card-header">
+            <h3><i class="fas fa-globe"></i> Global Cashback Settings</h3>
+            <button class="btn-secondary" id="editGlobalSettingsBtn">Edit</button>
+        </div>
+        <div class="settings-body" id="globalSettingsDisplay">
+            <div class="setting-row">
+                <span>Base Cashback Rate:</span>
+                <strong id="globalRate">—</strong>
+            </div>
+            <div class="setting-row">
+                <span>Minimum Purchase for Cashback:</span>
+                <strong id="minPurchase">—</strong>
+            </div>
+            <div class="setting-row">
+                <span>Maximum Cashback per Transaction:</span>
+                <strong id="maxCashback">—</strong>
+            </div>
+            <div class="setting-row">
+                <span>Cashback Expiry (days):</span>
+                <strong id="expiryDays">—</strong>
+            </div>
+            <div class="setting-row">
+                <span>Auto-Apply to All Products:</span>
+                <strong id="autoApply">—</strong>
+            </div>
+        </div>
+        <div class="settings-body" id="globalSettingsEdit" style="display: none;">
+            <div class="form-group">
+                <label>Base Cashback Rate (%)</label>
+                <input type="number" id="editGlobalRate" class="form-input" step="0.1" placeholder="e.g., 5">
+            </div>
+            <div class="form-group">
+                <label>Minimum Purchase ($)</label>
+                <input type="number" id="editMinPurchase" class="form-input" step="0.01" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label>Maximum Cashback per Transaction ($)</label>
+                <input type="number" id="editMaxCashback" class="form-input" step="0.01" placeholder="100.00">
+            </div>
+            <div class="form-group">
+                <label>Cashback Expiry (days)</label>
+                <input type="number" id="editExpiryDays" class="form-input" placeholder="30">
+            </div>
+            <div class="form-group">
+                <label>Auto-Apply to All Products</label>
+                <select id="editAutoApply" class="form-input">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button class="btn-secondary" id="cancelGlobalEdit">Cancel</button>
+                <button class="btn-primary" id="saveGlobalSettings">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Cashback Rates -->
+    <div class="settings-card">
+        <div class="card-header">
+            <h3><i class="fas fa-tags"></i> Category Cashback Rates</h3>
+            <button class="btn-primary" id="addCategoryRateBtn"><i class="fas fa-plus"></i> Add Rate</button>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table category-rates-table">
+                <thead>
+                    <tr><th>Category</th><th>Cashback Rate (%)</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="categoryRatesTableBody">
+                    <tr><td colspan="4" class="loading-placeholder">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Manual Cashback Form (hidden by default) -->
+    <div id="manualCashbackForm" class="manual-form" style="display: none;">
+        <div class="form-header">
+            <h3><i class="fas fa-hand-holding-usd"></i> Manual Cashback Adjustment</h3>
+            <button class="close-form-btn" id="closeManualForm">&times;</button>
+        </div>
+        <div class="form-body">
+            <div class="form-group">
+                <label>User Email or UID *</label>
+                <input type="text" id="manualUser" class="form-input" placeholder="user@example.com or UID" required>
+            </div>
+            <div class="form-group">
+                <label>Amount ($) *</label>
+                <input type="number" id="manualAmount" class="form-input" step="0.01" placeholder="10.00" required>
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <select id="manualType" class="form-input">
+                    <option value="credit">Credit (Add)</option>
+                    <option value="debit">Debit (Deduct)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Reason *</label>
+                <textarea id="manualReason" class="form-input" rows="2" placeholder="e.g., Bonus, Adjustment, Correction"></textarea>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button class="btn-secondary" id="cancelManualForm">Cancel</button>
+            <button class="btn-primary" id="submitManualCashback">Apply Adjustment</button>
+        </div>
+    </div>
+
+    <!-- Cashback Transaction History -->
+    <div class="transactions-section">
+        <div class="card-header">
+            <h3><i class="fas fa-history"></i> Cashback Transaction History</h3>
+            <div class="filter-group inline">
+                <input type="text" id="searchTransactions" placeholder="User or Order ID..." class="filter-input" style="width: 200px;">
+                <select id="transactionTypeFilter" class="filter-select">
+                    <option value="all">All Types</option>
+                    <option value="earned">Earned</option>
+                    <option value="redeemed">Redeemed</option>
+                    <option value="manual_credit">Manual Credit</option>
+                    <option value="manual_debit">Manual Debit</option>
+                    <option value="expired">Expired</option>
+                </select>
+                <button class="btn-primary" id="applyTxFilter">Apply</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table transactions-table">
+                <thead>
+                    <tr><th>Date</th><th>User</th><th>Type</th><th>Amount</th><th>Order/Reference</th><th>Status</th></tr>
+                </thead>
+                <tbody id="transactionsTableBody">
+                    <tr><td colspan="6" class="loading-placeholder">Loading transactions...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-container">
+            <button class="page-btn" id="prevTxPage" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+            <span class="page-info" id="txPageInfo">Page 1 of 1</span>
+            <button class="page-btn" id="nextTxPage">Next <i class="fas fa-chevron-right"></i></button>
+            <div class="per-page-select">
+                <span>Show</span>
+                <select id="txPerPage">
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+                <span>entries</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Category Rate Modal -->
+<div id="deleteRateModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle"></i> Delete Category Rate</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Remove cashback rate for category "<strong id="deleteCategoryName"></strong>"?</p>
+            <p class="text-danger">Products in this category will fall back to global rate.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-danger" id="confirmDeleteRateBtn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.cashback-panel {
+    animation: fadeIn 0.3s ease;
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.panel-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.panel-header h2 i {
+    color: #3b82f6;
+    margin-right: 10px;
+}
+.settings-card {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+.card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+.settings-body {
+    padding: 1.5rem;
+}
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.setting-row:last-child {
+    border-bottom: none;
+}
+.manual-form {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+.close-form-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+.form-body, .form-footer {
+    padding: 1.5rem;
+}
+.form-footer {
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+.category-rates-table td, .transactions-table td {
+    font-size: 0.85rem;
+}
+.inline {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+}
+@media (max-width: 768px) {
+    .inline {
+        flex-direction: column;
+        width: 100%;
+    }
+    .card-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+}
+</style>
+
+<script>
+    (function() {
+        // Modal handlers
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                if (modal) modal.style.display = 'none';
+            });
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+        });
+
+        // Global settings edit toggle
+        const editGlobalBtn = document.getElementById('editGlobalSettingsBtn');
+        const displayDiv = document.getElementById('globalSettingsDisplay');
+        const editDiv = document.getElementById('globalSettingsEdit');
+        const cancelEdit = document.getElementById('cancelGlobalEdit');
+        if (editGlobalBtn) {
+            editGlobalBtn.addEventListener('click', () => {
+                // Populate edit fields with current values
+                document.getElementById('editGlobalRate').value = document.getElementById('globalRate').innerText.replace('%','');
+                document.getElementById('editMinPurchase').value = document.getElementById('minPurchase').innerText.replace('$','');
+                document.getElementById('editMaxCashback').value = document.getElementById('maxCashback').innerText.replace('$','');
+                document.getElementById('editExpiryDays').value = document.getElementById('expiryDays').innerText;
+                document.getElementById('editAutoApply').value = document.getElementById('autoApply').innerText.toLowerCase() === 'yes' ? 'yes' : 'no';
+                displayDiv.style.display = 'none';
+                editDiv.style.display = 'block';
+            });
+        }
+        if (cancelEdit) {
+            cancelEdit.addEventListener('click', () => {
+                displayDiv.style.display = 'block';
+                editDiv.style.display = 'none';
+            });
+        }
+        const saveGlobal = document.getElementById('saveGlobalSettings');
+        if (saveGlobal) {
+            saveGlobal.addEventListener('click', () => {
+                if (typeof window.saveGlobalCashbackSettings === 'function') {
+                    const settings = {
+                        globalRate: parseFloat(document.getElementById('editGlobalRate').value),
+                        minPurchase: parseFloat(document.getElementById('editMinPurchase').value),
+                        maxCashback: parseFloat(document.getElementById('editMaxCashback').value),
+                        expiryDays: parseInt(document.getElementById('editExpiryDays').value),
+                        autoApply: document.getElementById('editAutoApply').value === 'yes'
+                    };
+                    window.saveGlobalCashbackSettings(settings).then(() => {
+                        displayDiv.style.display = 'block';
+                        editDiv.style.display = 'none';
+                        if (typeof window.refreshGlobalSettings === 'function') window.refreshGlobalSettings();
+                    });
+                } else {
+                    alert('Save function not implemented in cashback.js');
+                    displayDiv.style.display = 'block';
+                    editDiv.style.display = 'none';
+                }
+            });
+        }
+
+        // Manual cashback form
+        const manualBtn = document.getElementById('manualCashbackBtn');
+        const manualForm = document.getElementById('manualCashbackForm');
+        const closeManual = document.getElementById('closeManualForm');
+        const cancelManual = document.getElementById('cancelManualForm');
+        if (manualBtn) manualBtn.addEventListener('click', () => manualForm.style.display = 'block');
+        if (closeManual) closeManual.addEventListener('click', () => manualForm.style.display = 'none');
+        if (cancelManual) cancelManual.addEventListener('click', () => manualForm.style.display = 'none');
+
+        const submitManual = document.getElementById('submitManualCashback');
+        if (submitManual) {
+            submitManual.addEventListener('click', () => {
+                if (typeof window.applyManualCashback === 'function') {
+                    const data = {
+                        user: document.getElementById('manualUser').value,
+                        amount: parseFloat(document.getElementById('manualAmount').value),
+                        type: document.getElementById('manualType').value,
+                        reason: document.getElementById('manualReason').value
+                    };
+                    window.applyManualCashback(data).then(() => {
+                        manualForm.style.display = 'none';
+                        document.getElementById('manualUser').value = '';
+                        document.getElementById('manualAmount').value = '';
+                        document.getElementById('manualReason').value = '';
+                        if (typeof window.refreshTransactions === 'function') window.refreshTransactions();
+                    });
+                } else {
+                    alert('Manual cashback function not implemented in cashback.js');
+                    manualForm.style.display = 'none';
+                }
+            });
+        }
+
+        // Add category rate (placeholder)
+        const addCatBtn = document.getElementById('addCategoryRateBtn');
+        if (addCatBtn) {
+            addCatBtn.addEventListener('click', () => {
+                if (typeof window.showAddCategoryRateModal === 'function') {
+                    window.showAddCategoryRateModal();
+                } else {
+                    alert('Add category rate will be implemented in cashback.js');
+                }
+            });
+        }
+
+        // Delete category rate
+        window.deleteCategoryRate = function(category, rateId) {
+            document.getElementById('deleteCategoryName').innerText = category;
+            document.getElementById('confirmDeleteRateBtn').dataset.id = rateId;
+            document.getElementById('deleteRateModal').style.display = 'flex';
+        };
+        const confirmDelete = document.getElementById('confirmDeleteRateBtn');
+        if (confirmDelete) {
+            confirmDelete.addEventListener('click', () => {
+                const id = confirmDelete.dataset.id;
+                if (typeof window.removeCategoryRate === 'function') {
+                    window.removeCategoryRate(id).then(() => closeAllModals());
+                } else {
+                    closeAllModals();
+                    alert('Delete function not implemented');
+                }
+            });
+        }
+
+        // Transaction filters
+        const applyTxFilter = document.getElementById('applyTxFilter');
+        if (applyTxFilter) {
+            applyTxFilter.addEventListener('click', () => {
+                if (typeof window.filterCashbackTransactions === 'function') {
+                    window.filterCashbackTransactions({
+                        search: document.getElementById('searchTransactions').value,
+                        type: document.getElementById('transactionTypeFilter').value
+                    });
+                }
+            });
+        }
+
+        // Pagination for transactions
+        const prevTx = document.getElementById('prevTxPage');
+        const nextTx = document.getElementById('nextTxPage');
+        const txPerPage = document.getElementById('txPerPage');
+        if (prevTx && nextTx && txPerPage) {
+            prevTx.addEventListener('click', () => {
+                if (typeof window.changeTxPage === 'function') window.changeTxPage('prev');
+            });
+            nextTx.addEventListener('click', () => {
+                if (typeof window.changeTxPage === 'function') window.changeTxPage('next');
+            });
+            txPerPage.addEventListener('change', () => {
+                if (typeof window.setTxPerPage === 'function') window.setTxPerPage(parseInt(txPerPage.value));
+            });
+        }
+
+        // Notify panel ready
+        if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('cashbackPanelReady'));
+        }
+    })();
+</script>

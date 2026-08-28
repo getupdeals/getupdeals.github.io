@@ -1,0 +1,456 @@
+<!-- admin/panels/users.html -->
+<div class="users-panel">
+    <!-- Header with title and add button -->
+    <div class="panel-header">
+        <h2><i class="fas fa-users"></i> User Management</h2>
+        <button class="btn-primary" id="addUserBtn"><i class="fas fa-plus"></i> Add User</button>
+    </div>
+
+    <!-- Filters & Search -->
+    <div class="filters-bar">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchUsers" placeholder="Search by name, email or UID..." class="search-input">
+        </div>
+        <div class="filter-group">
+            <select id="statusFilter" class="filter-select">
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="blocked">Blocked</option>
+            </select>
+            <select id="sortBy" class="filter-select">
+                <option value="joined_desc">Newest First</option>
+                <option value="joined_asc">Oldest First</option>
+                <option value="cashback_desc">Highest Cashback</option>
+                <option value="name_asc">Name A-Z</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="table-responsive">
+        <table class="data-table users-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Cashback</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody">
+                <tr><td colspan="6" class="loading-placeholder">Loading users...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container" id="paginationContainer">
+        <button class="page-btn" id="prevPage" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+        <span class="page-info" id="pageInfo">Page 1 of 1</span>
+        <button class="page-btn" id="nextPage">Next <i class="fas fa-chevron-right"></i></button>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-edit"></i> Edit User</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editUserId">
+            <div class="form-group">
+                <label>Display Name</label>
+                <input type="text" id="editDisplayName" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="editEmail" class="form-input" readonly>
+            </div>
+            <div class="form-group">
+                <label>Cashback Balance ($)</label>
+                <input type="number" id="editCashback" class="form-input" step="0.01">
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select id="editStatus" class="form-input">
+                    <option value="active">Active</option>
+                    <option value="blocked">Blocked</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="editRole" class="form-input">
+                    <option value="user">User</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" id="saveUserChanges">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteUserModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle"></i> Delete User</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete <strong id="deleteUserName"></strong>?</p>
+            <p class="text-danger">This action cannot be undone. All user data (cashback, referrals, clicks) will be permanently removed.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-danger" id="confirmDeleteBtn">Delete Permanently</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add User Modal (simple) -->
+<div id="addUserModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-plus"></i> Add New User</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="addUserEmail" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label>Password *</label>
+                <input type="password" id="addUserPassword" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label>Display Name</label>
+                <input type="text" id="addUserDisplayName" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>Initial Cashback ($)</label>
+                <input type="number" id="addUserCashback" class="form-input" step="0.01" value="0">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" id="createUserBtn">Create User</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Users panel specific styles */
+.users-panel {
+    animation: fadeIn 0.3s ease;
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.panel-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.panel-header h2 i {
+    color: #3b82f6;
+    margin-right: 10px;
+}
+.filters-bar {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+.search-wrapper {
+    flex: 1;
+    position: relative;
+    min-width: 200px;
+}
+.search-wrapper i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+.search-wrapper .search-input {
+    width: 100%;
+    padding: 10px 10px 10px 38px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+.filter-group {
+    display: flex;
+    gap: 0.75rem;
+}
+.filter-select {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+.users-table th:nth-child(3),
+.users-table td:nth-child(3) {
+    text-align: right;
+}
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+.action-btn.edit {
+    color: #3b82f6;
+}
+.action-btn.edit:hover {
+    background: rgba(59,130,246,0.1);
+}
+.action-btn.delete {
+    color: #ef4444;
+}
+.action-btn.delete:hover {
+    background: rgba(239,68,68,0.1);
+}
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem 0;
+}
+.page-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.page-btn:hover:not(:disabled) {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+}
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.page-info {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.modal-content {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid var(--border-color);
+    animation: modalSlideIn 0.2s ease;
+}
+@keyframes modalSlideIn {
+    from { transform: translateY(-30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+.modal-close {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+.modal-close:hover {
+    color: #ef4444;
+}
+.modal-body {
+    padding: 1.5rem;
+}
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+.form-group {
+    margin-bottom: 1rem;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+.form-input {
+    width: 100%;
+    padding: 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+.form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s;
+}
+.btn-primary:hover {
+    background: #2563eb;
+}
+.btn-secondary {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn-danger {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn-danger:hover {
+    background: #dc2626;
+}
+.text-danger {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+@media (max-width: 768px) {
+    .filters-bar {
+        flex-direction: column;
+    }
+    .filter-group {
+        width: 100%;
+    }
+    .filter-select {
+        flex: 1;
+    }
+    .users-table th, .users-table td {
+        font-size: 0.75rem;
+        padding: 8px 4px;
+    }
+}
+</style>
+
+<script>
+    // Basic modal handling and UI placeholders
+    (function() {
+        // Helper to open modal
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'flex';
+        }
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'none';
+        }
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+
+        // Attach close buttons
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                if (modal) modal.style.display = 'none';
+            });
+        });
+        // Click outside to close
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // Add User button
+        const addBtn = document.getElementById('addUserBtn');
+        if (addBtn) {
+            addBtn.addEventListener('click', () => openModal('addUserModal'));
+        }
+
+        // Placeholder for edit/delete actions (will be wired by users.js)
+        window.editUser = function(userId) {
+            console.log('Edit user', userId);
+            openModal('editUserModal');
+        };
+        window.deleteUser = function(userId, userName) {
+            document.getElementById('deleteUserName').innerText = userName;
+            document.getElementById('confirmDeleteBtn').dataset.userId = userId;
+            openModal('deleteUserModal');
+        };
+
+        // Notify that users.html is ready
+        if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('usersPanelReady'));
+        }
+    })();
+</script>

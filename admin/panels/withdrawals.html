@@ -1,0 +1,486 @@
+<!-- admin/panels/withdrawals.html -->
+<div class="withdrawals-panel">
+    <div class="panel-header">
+        <h2><i class="fas fa-money-bill-wave"></i> Withdrawal Requests</h2>
+        <div class="stats-badges">
+            <span class="stat-badge pending">Pending: <strong id="pendingCount">0</strong></span>
+            <span class="stat-badge approved">Approved: <strong id="approvedCount">0</strong></span>
+            <span class="stat-badge rejected">Rejected: <strong id="rejectedCount">0</strong></span>
+            <span class="stat-badge completed">Completed: <strong id="completedCount">0</strong></span>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-section">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="statusFilter" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Payment Method</label>
+                <select id="methodFilter" class="filter-select">
+                    <option value="all">All Methods</option>
+                    <option value="bank">Bank Transfer</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="upi">UPI</option>
+                    <option value="crypto">Cryptocurrency</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Search User</label>
+                <input type="text" id="searchUser" placeholder="Email or UID..." class="filter-input">
+            </div>
+            <div class="filter-group">
+                <label>Date Range</label>
+                <div class="date-range-inputs">
+                    <input type="date" id="startDate" class="filter-input" placeholder="From">
+                    <input type="date" id="endDate" class="filter-input" placeholder="To">
+                </div>
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button class="btn-secondary" id="resetFiltersBtn">Reset</button>
+            <button class="btn-primary" id="applyFiltersBtn">Apply</button>
+        </div>
+    </div>
+
+    <!-- Withdrawals Table -->
+    <div class="table-responsive">
+        <table class="data-table withdrawals-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Account Details</th>
+                    <th>Requested</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="withdrawalsTableBody">
+                <tr><td colspan="8" class="loading-placeholder">Loading withdrawal requests......</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+        <button class="page-btn" id="prevPage" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+        <span class="page-info" id="pageInfo">Page 1 of 1</span>
+        <button class="page-btn" id="nextPage">Next <i class="fas fa-chevron-right"></i></button>
+        <div class="per-page-select">
+            <span>Show</span>
+            <select id="perPage">
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+            </select>
+            <span>entries</span>
+        </div>
+    </div>
+</div>
+
+<!-- View Details Modal -->
+<div id="viewDetailsModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-info-circle"></i> Withdrawal Details</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body" id="withdrawalDetailsBody">
+            <!-- Dynamic content -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Approve Modal -->
+<div id="approveModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 450px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-check-circle"></i> Approve Withdrawal</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Approve withdrawal request for <strong id="approveUserName"></strong>?</p>
+            <div class="form-group">
+                <label>Amount: <strong id="approveAmount"></strong></label>
+            </div>
+            <div class="form-group">
+                <label>Payment Method: <strong id="approveMethod"></strong></label>
+            </div>
+            <div class="form-group">
+                <label>Admin Notes (optional)</label>
+                <textarea id="approveNotes" class="form-input" rows="2" placeholder="Add any notes..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Transaction ID (optional)</label>
+                <input type="text" id="approveTxId" class="form-input" placeholder="Payment reference ID">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" id="confirmApproveBtn">Approve & Process</button>
+        </div>
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div id="rejectModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 450px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-times-circle"></i> Reject Withdrawal</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Reject withdrawal request for <strong id="rejectUserName"></strong>?</p>
+            <div class="form-group">
+                <label>Reason for rejection *</label>
+                <textarea id="rejectReason" class="form-input" rows="2" placeholder="Explain why this request is being rejected..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Refund cashback to user?</label>
+                <select id="refundCashback" class="form-input">
+                    <option value="yes">Yes, return amount to user balance</option>
+                    <option value="no">No, deduct permanently</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-danger" id="confirmRejectBtn">Reject Request</button>
+        </div>
+    </div>
+</div>
+
+<!-- Mark Completed Modal -->
+<div id="completeModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 450px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-check-double"></i> Mark as Completed</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Mark this withdrawal as <strong>completed</strong>?</p>
+            <div class="form-group">
+                <label>Payment Confirmation Details</label>
+                <input type="text" id="completeTxId" class="form-input" placeholder="Transaction ID / Reference">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" id="confirmCompleteBtn">Mark Completed</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.withdrawals-panel {
+    animation: fadeIn 0.3s ease;
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.panel-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.panel-header h2 i {
+    color: #3b82f6;
+    margin-right: 10px;
+}
+.stats-badges {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+.stat-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+.stat-badge.pending { background: rgba(245,158,11,0.2); color: #f59e0b; }
+.stat-badge.approved { background: rgba(59,130,246,0.2); color: #3b82f6; }
+.stat-badge.rejected { background: rgba(239,68,68,0.2); color: #ef4444; }
+.stat-badge.completed { background: rgba(16,185,129,0.2); color: #10b981; }
+.filters-section {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.filter-group {
+    flex: 1;
+    min-width: 160px;
+}
+.filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+.filter-input, .filter-select {
+    width: 100%;
+    padding: 8px 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+.date-range-inputs {
+    display: flex;
+    gap: 6px;
+}
+.date-range-inputs input {
+    flex: 1;
+}
+.filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+.withdrawals-table th, .withdrawals-table td {
+    vertical-align: middle;
+    font-size: 0.85rem;
+}
+.status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.status-pending { background: rgba(245,158,11,0.2); color: #f59e0b; }
+.status-approved { background: rgba(59,130,246,0.2); color: #3b82f6; }
+.status-rejected { background: rgba(239,68,68,0.2); color: #ef4444; }
+.status-completed { background: rgba(16,185,129,0.2); color: #10b981; }
+.action-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+.action-btn.view { color: #3b82f6; }
+.action-btn.approve { color: #10b981; }
+.action-btn.reject { color: #ef4444; }
+.action-btn.complete { color: #8b5cf6; }
+.action-btn:hover {
+    background: var(--hover-bg);
+}
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+}
+.per-page-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-secondary);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+@media (max-width: 768px) {
+    .filter-row {
+        flex-direction: column;
+    }
+    .stats-badges {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .withdrawals-table th, .withdrawals-table td {
+        font-size: 0.7rem;
+        padding: 6px 4px;
+    }
+    .action-btn {
+        padding: 2px 4px;
+        font-size: 0.7rem;
+    }
+}
+</style>
+
+<script>
+    (function() {
+        // Modal handlers
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                if (modal) modal.style.display = 'none';
+            });
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+        });
+
+        // View details
+        window.viewWithdrawalDetails = function(withdrawalData) {
+            const modal = document.getElementById('viewDetailsModal');
+            const body = document.getElementById('withdrawalDetailsBody');
+            if (!modal || !body) return;
+            body.innerHTML = `
+                <div style="display: grid; gap: 0.75rem;">
+                    <div><strong>Request ID:</strong> ${withdrawalData.id}</div>
+                    <div><strong>User:</strong> ${withdrawalData.userName || withdrawalData.userEmail || withdrawalData.userId}</div>
+                    <div><strong>Amount:</strong> $${withdrawalData.amount}</div>
+                    <div><strong>Payment Method:</strong> ${withdrawalData.method}</div>
+                    <div><strong>Account Details:</strong> <pre style="background:var(--bg-primary); padding:8px; border-radius:8px; overflow-x:auto;">${JSON.stringify(withdrawalData.accountDetails, null, 2)}</pre></div>
+                    <div><strong>Requested Date:</strong> ${new Date(withdrawalData.requestedAt).toLocaleString()}</div>
+                    <div><strong>Status:</strong> ${withdrawalData.status}</div>
+                    ${withdrawalData.adminNotes ? `<div><strong>Admin Notes:</strong> ${withdrawalData.adminNotes}</div>` : ''}
+                    ${withdrawalData.processedAt ? `<div><strong>Processed Date:</strong> ${new Date(withdrawalData.processedAt).toLocaleString()}</div>` : ''}
+                    ${withdrawalData.transactionId ? `<div><strong>Transaction ID:</strong> ${withdrawalData.transactionId}</div>` : ''}
+                </div>
+            `;
+            modal.style.display = 'flex';
+        };
+
+        // Approve
+        window.openApproveModal = function(withdrawalId, userName, amount, method) {
+            document.getElementById('confirmApproveBtn').dataset.id = withdrawalId;
+            document.getElementById('approveUserName').innerText = userName;
+            document.getElementById('approveAmount').innerText = `$${amount}`;
+            document.getElementById('approveMethod').innerText = method;
+            document.getElementById('approveNotes').value = '';
+            document.getElementById('approveTxId').value = '';
+            document.getElementById('approveModal').style.display = 'flex';
+        };
+        document.getElementById('confirmApproveBtn')?.addEventListener('click', () => {
+            const id = document.getElementById('confirmApproveBtn').dataset.id;
+            const notes = document.getElementById('approveNotes').value;
+            const txId = document.getElementById('approveTxId').value;
+            if (typeof window.approveWithdrawal === 'function') {
+                window.approveWithdrawal(id, notes, txId).then(() => closeAllModals());
+            } else {
+                alert('Approve function not implemented in withdrawals.js');
+                closeAllModals();
+            }
+        });
+
+        // Reject
+        window.openRejectModal = function(withdrawalId, userName) {
+            document.getElementById('confirmRejectBtn').dataset.id = withdrawalId;
+            document.getElementById('rejectUserName').innerText = userName;
+            document.getElementById('rejectReason').value = '';
+            document.getElementById('refundCashback').value = 'yes';
+            document.getElementById('rejectModal').style.display = 'flex';
+        };
+        document.getElementById('confirmRejectBtn')?.addEventListener('click', () => {
+            const id = document.getElementById('confirmRejectBtn').dataset.id;
+            const reason = document.getElementById('rejectReason').value;
+            const refund = document.getElementById('refundCashback').value === 'yes';
+            if (typeof window.rejectWithdrawal === 'function') {
+                window.rejectWithdrawal(id, reason, refund).then(() => closeAllModals());
+            } else {
+                alert('Reject function not implemented in withdrawals.js');
+                closeAllModals();
+            }
+        });
+
+        // Mark Completed
+        window.openCompleteModal = function(withdrawalId) {
+            document.getElementById('confirmCompleteBtn').dataset.id = withdrawalId;
+            document.getElementById('completeTxId').value = '';
+            document.getElementById('completeModal').style.display = 'flex';
+        };
+        document.getElementById('confirmCompleteBtn')?.addEventListener('click', () => {
+            const id = document.getElementById('confirmCompleteBtn').dataset.id;
+            const txId = document.getElementById('completeTxId').value;
+            if (typeof window.completeWithdrawal === 'function') {
+                window.completeWithdrawal(id, txId).then(() => closeAllModals());
+            } else {
+                alert('Complete function not implemented in withdrawals.js');
+                closeAllModals();
+            }
+        });
+
+        // Filters
+        const applyBtn = document.getElementById('applyFiltersBtn');
+        const resetBtn = document.getElementById('resetFiltersBtn');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', () => {
+                if (typeof window.filterWithdrawals === 'function') {
+                    window.filterWithdrawals({
+                        status: document.getElementById('statusFilter').value,
+                        method: document.getElementById('methodFilter').value,
+                        searchUser: document.getElementById('searchUser').value,
+                        startDate: document.getElementById('startDate').value,
+                        endDate: document.getElementById('endDate').value
+                    });
+                }
+            });
+        }
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                document.getElementById('statusFilter').value = 'all';
+                document.getElementById('methodFilter').value = 'all';
+                document.getElementById('searchUser').value = '';
+                document.getElementById('startDate').value = '';
+                document.getElementById('endDate').value = '';
+                if (typeof window.filterWithdrawals === 'function') window.filterWithdrawals({});
+            });
+        }
+
+        // Pagination
+        const prevPage = document.getElementById('prevPage');
+        const nextPage = document.getElementById('nextPage');
+        const perPage = document.getElementById('perPage');
+        if (prevPage && nextPage && perPage) {
+            prevPage.addEventListener('click', () => {
+                if (typeof window.changeWithdrawalsPage === 'function') window.changeWithdrawalsPage('prev');
+            });
+            nextPage.addEventListener('click', () => {
+                if (typeof window.changeWithdrawalsPage === 'function') window.changeWithdrawalsPage('next');
+            });
+            perPage.addEventListener('change', () => {
+                if (typeof window.setWithdrawalsPerPage === 'function') window.setWithdrawalsPerPage(parseInt(perPage.value));
+            });
+        }
+
+        // Notify panel ready
+        if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('withdrawalsPanelReady'));
+        }
+    })();
+</script>

@@ -1,0 +1,288 @@
+<!-- admin/panels/dashboard.html -->
+<div class="dashboard-container">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-details">
+                <h3>Total Users</h3>
+                <p class="stat-number" id="totalUsers">—</p>
+                <span class="stat-change positive">+12% <i class="fas fa-arrow-up"></i></span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="stat-details">
+                <h3>Total Cashback</h3>
+                <p class="stat-number" id="totalCashback">—</p>
+                <span class="stat-change positive">+8% <i class="fas fa-arrow-up"></i></span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-details">
+                <h3>Pending Withdrawals</h3>
+                <p class="stat-number" id="pendingWithdrawals">—</p>
+                <span class="stat-change negative">-3% <i class="fas fa-arrow-down"></i></span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-mouse-pointer"></i></div>
+            <div class="stat-details">
+                <h3>Total Clicks (30d)</h3>
+                <p class="stat-number" id="totalClicks">—</p>
+                <span class="stat-change positive">+24% <i class="fas fa-arrow-up"></i></span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="stat-details">
+                <h3>Revenue (est.)</h3>
+                <p class="stat-number" id="totalRevenue">—</p>
+                <span class="stat-change positive">+15% <i class="fas fa-arrow-up"></i></span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-percent"></i></div>
+            <div class="stat-details">
+                <h3>Conversion Rate</h3>
+                <p class="stat-number" id="conversionRate">—</p>
+                <span class="stat-change neutral">±0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+        <div class="chart-card">
+            <div class="card-header">
+                <h3><i class="fas fa-chart-bar"></i> Earnings Overview</h3>
+                <select id="earningsPeriod" class="period-select">
+                    <option value="7">Last 7 days</option>
+                    <option value="30">Last 30 days</option>
+                    <option value="90">Last 90 days</option>
+                </select>
+            </div>
+            <canvas id="earningsChart" height="250"></canvas>
+        </div>
+        <div class="chart-card">
+            <div class="card-header">
+                <h3><i class="fas fa-users"></i> User Registrations</h3>
+                <select id="usersPeriod" class="period-select">
+                    <option value="7">Last 7 days</option>
+                    <option value="30">Last 30 days</option>
+                </select>
+            </div>
+            <canvas id="usersChart" height="250"></canvas>
+        </div>
+    </div>
+
+    <!-- Recent Tables -->
+    <div class="tables-row">
+        <div class="recent-table">
+            <div class="card-header">
+                <h3><i class="fas fa-user-plus"></i> Recent Users</h3>
+                <a href="#" data-panel="users" class="view-all-link">View all <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead><tr><th>User</th><th>Email</th><th>Joined</th><th>Status</th></tr></thead>
+                    <tbody id="recentUsersTable"><tr><td colspan="4" class="loading-placeholder">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="recent-table">
+            <div class="card-header">
+                <h3><i class="fas fa-money-bill-wave"></i> Recent Withdrawals</h3>
+                <a href="#" data-panel="withdrawals" class="view-all-link">View all <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead><tr><th>User</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th></tr></thead>
+                    <tbody id="recentWithdrawalsTable"><tr><td colspan="5" class="loading-placeholder">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="recent-table">
+            <div class="card-header">
+                <h3><i class="fas fa-fire"></i> Top Performing Deals</h3>
+                <a href="#" data-panel="products" class="view-all-link">View all <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead><tr><th>Deal</th><th>Clicks</th><th>Conversions</th><th>Revenue</th></tr></thead>
+                    <tbody id="topDealsTable"><tr><td colspan="4" class="loading-placeholder">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dashboard-container {
+        animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border: 1px solid var(--border-color);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .stat-icon {
+        width: 54px;
+        height: 54px;
+        background: rgba(59,130,246,0.1);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        color: #3b82f6;
+    }
+    .stat-details {
+        flex: 1;
+    }
+    .stat-details h3 {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: 0.3rem;
+    }
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+        line-height: 1.2;
+    }
+    .stat-change {
+        font-size: 0.75rem;
+        display: inline-block;
+        margin-top: 0.25rem;
+    }
+    .stat-change.positive { color: #10b981; }
+    .stat-change.negative { color: #ef4444; }
+    .stat-change.neutral { color: #f59e0b; }
+    .charts-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .chart-card, .recent-table {
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        padding: 1.25rem;
+    }
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .card-header h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+    }
+    .card-header h3 i {
+        margin-right: 8px;
+        color: #3b82f6;
+    }
+    .period-select {
+        background: var(--input-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        cursor: pointer;
+    }
+    .tables-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+    }
+    .data-table th, .data-table td {
+        padding: 12px 8px;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .data-table th {
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+    .view-all-link {
+        color: #3b82f6;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+    .view-all-link:hover {
+        text-decoration: underline;
+    }
+    .loading-placeholder {
+        text-align: center;
+        color: var(--text-secondary);
+        padding: 2rem;
+    }
+    .table-responsive {
+        overflow-x: auto;
+    }
+    @media (max-width: 768px) {
+        .stats-grid { gap: 1rem; }
+        .charts-row { grid-template-columns: 1fr; }
+        .tables-row { grid-template-columns: 1fr; }
+    }
+</style>
+
+<script>
+    // Dashboard initialization script – will be called by dashboard.js or directly
+    (function() {
+        // Prevent duplicate initializations
+        if (window.dashboardInitialized) return;
+        window.dashboardInitialized = true;
+
+        // Wait for Chart.js to be ready (it's loaded in parent)
+        if (typeof Chart === 'undefined') {
+            console.warn('Chart.js not loaded yet, retrying...');
+            setTimeout(arguments.callee, 200);
+            return;
+        }
+
+        // Placeholder: actual data will come from Firebase via dashboard.js
+        console.log('Dashboard UI ready – waiting for dashboard.js to populate data');
+        
+        // Example: You can call a global function if dashboard.js exists
+        if (typeof window.loadDashboardData === 'function') {
+            window.loadDashboardData();
+        } else {
+            console.log('dashboard.js not loaded yet – static view');
+        }
+    })();
+</script>

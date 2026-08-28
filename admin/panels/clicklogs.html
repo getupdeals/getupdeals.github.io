@@ -1,0 +1,381 @@
+<!-- admin/panels/clicklogs.html -->
+<div class="clicklogs-panel">
+    <div class="panel-header">
+        <h2><i class="fas fa-mouse-pointer"></i> Click Logs</h2>
+        <button class="btn-primary" id="exportLogsBtn"><i class="fas fa-download"></i> Export CSV</button>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="stats-summary">
+        <div class="stat-badge">
+            <span>Total Clicks</span>
+            <strong id="totalClicksCount">—</strong>
+        </div>
+        <div class="stat-badge">
+            <span>Converted Clicks</span>
+            <strong id="convertedCount">—</strong>
+        </div>
+        <div class="stat-badge">
+            <span>Conversion Rate</span>
+            <strong id="clickConversionRate">—</strong>
+        </div>
+        <div class="stat-badge">
+            <span>Unique Users</span>
+            <strong id="uniqueUsersCount">—</strong>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-section">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>Date Range</label>
+                <div class="date-range-inputs">
+                    <input type="date" id="logStartDate" class="filter-input">
+                    <span>to</span>
+                    <input type="date" id="logEndDate" class="filter-input">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label>User</label>
+                <input type="text" id="filterUserId" placeholder="User ID or Email" class="filter-input">
+            </div>
+            <div class="filter-group">
+                <label>Product</label>
+                <input type="text" id="filterProduct" placeholder="Product name or ID" class="filter-input">
+            </div>
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="filterConverted" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="true">Converted</option>
+                    <option value="false">Not Converted</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button class="btn-secondary" id="resetFiltersBtn">Reset Filters</button>
+            <button class="btn-primary" id="applyFiltersBtn">Apply Filters</button>
+        </div>
+    </div>
+
+    <!-- Logs Table -->
+    <div class="table-responsive">
+        <table class="data-table logs-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>IP Address</th>
+                    <th>Referral</th>
+                    <th>Converted</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="clicklogsTableBody">
+                <tr><td colspan="8" class="loading-placeholder">Loading click logs...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+        <button class="page-btn" id="prevPageLogs" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+        <span class="page-info" id="pageInfoLogs">Page 1 of 1</span>
+        <button class="page-btn" id="nextPageLogs">Next <i class="fas fa-chevron-right"></i></button>
+        <div class="per-page-select">
+            <span>Show</span>
+            <select id="perPageLogs">
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>entries</span>
+        </div>
+    </div>
+</div>
+
+<!-- View Details Modal -->
+<div id="clickDetailModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-info-circle"></i> Click Details</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body" id="clickDetailBody">
+            <!-- Dynamic content -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Close</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.clicklogs-panel {
+    animation: fadeIn 0.3s ease;
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.panel-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.panel-header h2 i {
+    color: #3b82f6;
+    margin-right: 10px;
+}
+.stats-summary {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+.stat-badge {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--border-color);
+    min-width: 140px;
+}
+.stat-badge span {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    display: block;
+}
+.stat-badge strong {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.filters-section {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.filter-group {
+    flex: 1;
+    min-width: 160px;
+}
+.filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+.filter-input, .filter-select {
+    width: 100%;
+    padding: 8px 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+.date-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.date-range-inputs input {
+    flex: 1;
+}
+.filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+.logs-table th, .logs-table td {
+    font-size: 0.8rem;
+}
+.logs-table td {
+    word-break: break-word;
+}
+.converted-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.converted-true {
+    background: rgba(16,185,129,0.2);
+    color: #10b981;
+}
+.converted-false {
+    background: rgba(239,68,68,0.2);
+    color: #ef4444;
+}
+.view-details-btn {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+.view-details-btn:hover {
+    text-decoration: underline;
+}
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+}
+.per-page-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-secondary);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+.per-page-select select {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 4px;
+    border-radius: 6px;
+}
+@media (max-width: 768px) {
+    .filter-row {
+        flex-direction: column;
+    }
+    .stats-summary {
+        justify-content: space-between;
+    }
+    .stat-badge {
+        flex: 1;
+        text-align: center;
+    }
+    .logs-table th, .logs-table td {
+        font-size: 0.7rem;
+        padding: 6px 4px;
+    }
+}
+</style>
+
+<script>
+    (function() {
+        // Modal handlers
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                if (modal) modal.style.display = 'none';
+            });
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+        });
+
+        // View details function (will be used by clicklogs.js)
+        window.showClickDetails = function(clickData) {
+            const modal = document.getElementById('clickDetailModal');
+            const body = document.getElementById('clickDetailBody');
+            if (!modal || !body) return;
+            body.innerHTML = `
+                <div style="display: grid; gap: 0.75rem;">
+                    <div><strong>Timestamp:</strong> ${new Date(clickData.timestamp).toLocaleString()}</div>
+                    <div><strong>User:</strong> ${clickData.userName || clickData.userId || 'Anonymous'}</div>
+                    <div><strong>User Email:</strong> ${clickData.userEmail || '—'}</div>
+                    <div><strong>Product:</strong> ${clickData.productName || clickData.productId}</div>
+                    <div><strong>Category:</strong> ${clickData.category || '—'}</div>
+                    <div><strong>Affiliate Link:</strong> <a href="${clickData.link}" target="_blank" style="color:#3b82f6;">${clickData.link}</a></div>
+                    <div><strong>IP Address:</strong> ${clickData.ip || '—'}</div>
+                    <div><strong>Referral URL:</strong> ${clickData.referrer || 'Direct'}</div>
+                    <div><strong>User Agent:</strong> <small>${clickData.userAgent || '—'}</small></div>
+                    <div><strong>Converted:</strong> ${clickData.converted ? 'Yes' : 'No'}</div>
+                    ${clickData.conversionDate ? `<div><strong>Conversion Date:</strong> ${new Date(clickData.conversionDate).toLocaleString()}</div>` : ''}
+                </div>
+            `;
+            modal.style.display = 'flex';
+        };
+
+        // Export functionality placeholder
+        const exportBtn = document.getElementById('exportLogsBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                if (typeof window.exportClickLogs === 'function') {
+                    window.exportClickLogs();
+                } else {
+                    alert('Export functionality will be implemented in clicklogs.js');
+                }
+            });
+        }
+
+        // Filter apply/reset
+        const applyBtn = document.getElementById('applyFiltersBtn');
+        const resetBtn = document.getElementById('resetFiltersBtn');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', () => {
+                if (typeof window.filterClickLogs === 'function') {
+                    const filters = {
+                        startDate: document.getElementById('logStartDate').value,
+                        endDate: document.getElementById('logEndDate').value,
+                        userId: document.getElementById('filterUserId').value,
+                        product: document.getElementById('filterProduct').value,
+                        converted: document.getElementById('filterConverted').value
+                    };
+                    window.filterClickLogs(filters);
+                }
+            });
+        }
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                document.getElementById('logStartDate').value = '';
+                document.getElementById('logEndDate').value = '';
+                document.getElementById('filterUserId').value = '';
+                document.getElementById('filterProduct').value = '';
+                document.getElementById('filterConverted').value = 'all';
+                if (typeof window.filterClickLogs === 'function') {
+                    window.filterClickLogs({});
+                }
+            });
+        }
+
+        // Pagination controls
+        const prevBtn = document.getElementById('prevPageLogs');
+        const nextBtn = document.getElementById('nextPageLogs');
+        const perPageSelect = document.getElementById('perPageLogs');
+        if (prevBtn && nextBtn && perPageSelect) {
+            prevBtn.addEventListener('click', () => {
+                if (typeof window.changeLogsPage === 'function') window.changeLogsPage('prev');
+            });
+            nextBtn.addEventListener('click', () => {
+                if (typeof window.changeLogsPage === 'function') window.changeLogsPage('next');
+            });
+            perPageSelect.addEventListener('change', () => {
+                if (typeof window.setLogsPerPage === 'function') window.setLogsPerPage(parseInt(perPageSelect.value));
+            });
+        }
+
+        // Notify panel ready
+        if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('clicklogsPanelReady'));
+        }
+    })();
+</script>

@@ -1,0 +1,397 @@
+<!-- admin/panels/logs.html -->
+<div class="logs-panel">
+    <div class="panel-header">
+        <h2><i class="fas fa-history"></i> System Logs</h2>
+        <button class="btn-primary" id="exportLogsBtn"><i class="fas fa-download"></i> Export CSV</button>
+    </div>
+
+    <!-- Log Type Tabs -->
+    <div class="log-tabs">
+        <button class="log-tab active" data-log-type="all">All Logs</button>
+        <button class="log-tab" data-log-type="admin">Admin Actions</button>
+        <button class="log-tab" data-log-type="error">Errors</button>
+        <button class="log-tab" data-log-type="security">Security Events</button>
+        <button class="log-tab" data-log-type="system">System Events</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-section">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>Date Range</label>
+                <div class="date-range-inputs">
+                    <input type="date" id="logStartDate" class="filter-input">
+                    <span>to</span>
+                    <input type="date" id="logEndDate" class="filter-input">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" id="searchLogs" placeholder="Search by message, user, IP..." class="filter-input">
+            </div>
+            <div class="filter-group">
+                <label>Severity</label>
+                <select id="severityFilter" class="filter-select">
+                    <option value="all">All Severities</option>
+                    <option value="info">Info</option>
+                    <option value="warning">Warning</option>
+                    <option value="error">Error</option>
+                    <option value="critical">Critical</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button class="btn-secondary" id="resetFiltersBtn">Reset Filters</button>
+            <button class="btn-primary" id="applyFiltersBtn">Apply Filters</button>
+        </div>
+    </div>
+
+    <!-- Logs Table -->
+    <div class="table-responsive">
+        <table class="data-table logs-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Message</th>
+                    <th>User</th>
+                    <th>IP Address</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="logsTableBody">
+                <tr><td colspan="7" class="loading-placeholder">Loading logs......</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+        <button class="page-btn" id="prevPageLogs" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+        <span class="page-info" id="pageInfoLogs">Page 1 of 1</span>
+        <button class="page-btn" id="nextPageLogs">Next <i class="fas fa-chevron-right"></i></button>
+        <div class="per-page-select">
+            <span>Show</span>
+            <select id="perPageLogs">
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>entries</span>
+        </div>
+    </div>
+</div>
+
+<!-- View Log Detail Modal -->
+<div id="logDetailModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-file-alt"></i> Log Details</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body" id="logDetailBody">
+            <!-- Dynamic content -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Close</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.logs-panel {
+    animation: fadeIn 0.3s ease;
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.panel-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.panel-header h2 i {
+    color: #3b82f6;
+    margin-right: 10px;
+}
+.log-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+.log-tab {
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+.log-tab:hover {
+    background: var(--hover-bg);
+}
+.log-tab.active {
+    background: #3b82f6;
+    color: white;
+}
+.filters-section {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.filter-group {
+    flex: 1;
+    min-width: 180px;
+}
+.filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+.filter-input, .filter-select {
+    width: 100%;
+    padding: 8px 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+.date-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.date-range-inputs input {
+    flex: 1;
+}
+.filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+.logs-table th, .logs-table td {
+    font-size: 0.8rem;
+    vertical-align: middle;
+}
+.logs-table td {
+    word-break: break-word;
+    max-width: 300px;
+}
+.severity-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.severity-info {
+    background: rgba(59,130,246,0.2);
+    color: #3b82f6;
+}
+.severity-warning {
+    background: rgba(245,158,11,0.2);
+    color: #f59e0b;
+}
+.severity-error {
+    background: rgba(239,68,68,0.2);
+    color: #ef4444;
+}
+.severity-critical {
+    background: rgba(139,0,0,0.3);
+    color: #ff6b6b;
+}
+.log-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+}
+.view-details-btn {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+.view-details-btn:hover {
+    text-decoration: underline;
+}
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+}
+.per-page-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-secondary);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+.per-page-select select {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 4px;
+    border-radius: 6px;
+}
+@media (max-width: 768px) {
+    .filter-row {
+        flex-direction: column;
+    }
+    .logs-table th, .logs-table td {
+        font-size: 0.7rem;
+        padding: 6px 4px;
+    }
+    .logs-table td {
+        max-width: 150px;
+    }
+}
+</style>
+
+<script>
+    (function() {
+        // Modal handlers
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                if (modal) modal.style.display = 'none';
+            });
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+        });
+
+        // View log details
+        window.showLogDetails = function(logData) {
+            const modal = document.getElementById('logDetailModal');
+            const body = document.getElementById('logDetailBody');
+            if (!modal || !body) return;
+            body.innerHTML = `
+                <div style="display: grid; gap: 0.75rem;">
+                    <div><strong>Timestamp:</strong> ${new Date(logData.timestamp).toLocaleString()}</div>
+                    <div><strong>Type:</strong> ${logData.type || 'system'}</div>
+                    <div><strong>Severity:</strong> <span class="severity-badge severity-${logData.severity}">${logData.severity || 'info'}</span></div>
+                    <div><strong>Message:</strong> ${logData.message}</div>
+                    <div><strong>User:</strong> ${logData.userName || logData.userId || 'System'}</div>
+                    <div><strong>User Email:</strong> ${logData.userEmail || '—'}</div>
+                    <div><strong>IP Address:</strong> ${logData.ip || '—'}</div>
+                    <div><strong>User Agent:</strong> <small>${logData.userAgent || '—'}</small></div>
+                    ${logData.details ? `<div><strong>Additional Details:</strong> <pre style="background:var(--bg-primary); padding:8px; border-radius:8px; overflow-x:auto;">${JSON.stringify(logData.details, null, 2)}</pre></div>` : ''}
+                </div>
+            `;
+            modal.style.display = 'flex';
+        };
+
+        // Tab switching
+        document.querySelectorAll('.log-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.log-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const logType = this.dataset.logType;
+                if (typeof window.filterLogs === 'function') {
+                    window.filterLogs({ type: logType });
+                }
+            });
+        });
+
+        // Export button
+        const exportBtn = document.getElementById('exportLogsBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                if (typeof window.exportLogs === 'function') {
+                    window.exportLogs();
+                } else {
+                    alert('Export functionality will be implemented in logs.js');
+                }
+            });
+        }
+
+        // Apply / Reset filters
+        const applyBtn = document.getElementById('applyFiltersBtn');
+        const resetBtn = document.getElementById('resetFiltersBtn');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', () => {
+                if (typeof window.filterLogs === 'function') {
+                    const activeTab = document.querySelector('.log-tab.active');
+                    const logType = activeTab ? activeTab.dataset.logType : 'all';
+                    const filters = {
+                        type: logType,
+                        startDate: document.getElementById('logStartDate').value,
+                        endDate: document.getElementById('logEndDate').value,
+                        search: document.getElementById('searchLogs').value,
+                        severity: document.getElementById('severityFilter').value
+                    };
+                    window.filterLogs(filters);
+                }
+            });
+        }
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                document.getElementById('logStartDate').value = '';
+                document.getElementById('logEndDate').value = '';
+                document.getElementById('searchLogs').value = '';
+                document.getElementById('severityFilter').value = 'all';
+                // Also reset active tab to "all"
+                document.querySelectorAll('.log-tab').forEach(t => t.classList.remove('active'));
+                document.querySelector('.log-tab[data-log-type="all"]').classList.add('active');
+                if (typeof window.filterLogs === 'function') {
+                    window.filterLogs({ type: 'all', startDate: '', endDate: '', search: '', severity: 'all' });
+                }
+            });
+        }
+
+        // Pagination controls
+        const prevBtn = document.getElementById('prevPageLogs');
+        const nextBtn = document.getElementById('nextPageLogs');
+        const perPageSelect = document.getElementById('perPageLogs');
+        if (prevBtn && nextBtn && perPageSelect) {
+            prevBtn.addEventListener('click', () => {
+                if (typeof window.changeLogsPage === 'function') window.changeLogsPage('prev');
+            });
+            nextBtn.addEventListener('click', () => {
+                if (typeof window.changeLogsPage === 'function') window.changeLogsPage('next');
+            });
+            perPageSelect.addEventListener('change', () => {
+                if (typeof window.setLogsPerPage === 'function') window.setLogsPerPage(parseInt(perPageSelect.value));
+            });
+        }
+
+        // Notify panel ready
+        if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('logsPanelReady'));
+        }
+    })();
+</script>

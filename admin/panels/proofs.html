@@ -1,0 +1,417 @@
+<!-- admin/panels/proofs.html -->
+<div class="proofs-panel">
+    <div class="panel-header">
+        <h2><i class="fas fa-check-circle"></i> Purchase Proofs</h2>
+        <div class="stats-badges">
+            <span class="stat-badge pending">Pending: <strong id="pendingCount">0</strong></span>
+            <span class="stat-badge approved">Approved: <strong id="approvedCount">0</strong></span>
+            <span class="stat-badge rejected">Rejected: <strong id="rejectedCount">0</strong></span>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-section">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="statusFilter" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Search User</label>
+                <input type="text" id="searchUser" placeholder="Email or UID..." class="filter-input">
+            </div>
+            <div class="filter-group">
+                <label>Date Range</label>
+                <div class="date-range-inputs">
+                    <input type="date" id="startDate" class="filter-input" placeholder="From">
+                    <input type="date" id="endDate" class="filter-input" placeholder="To">
+                </div>
+            </div>
+        </div>
+        <div class="filter-actions">
+            <button class="btn-secondary" id="resetFiltersBtn">Reset</button>
+            <button class="btn-primary" id="applyFiltersBtn">Apply</button>
+        </div>
+    </div>
+
+    <!-- Proofs Table -->
+    <div class="table-responsive">
+        <table class="data-table proofs-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>User</th>
+                    <th>Order ID</th>
+                    <th>Amount</th>
+                    <th>Uploaded</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="proofsTableBody">
+                <tr><td colspan="7" class="loading-placeholder">Loading proofs...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+        <button class="page-btn" id="prevPage" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+        <span class="page-info" id="pageInfo">Page 1 of 1</span>
+        <button class="page-btn" id="nextPage">Next <i class="fas fa-chevron-right"></i></button>
+        <div class="per-page-select">
+            <span>Show</span>
+            <select id="perPage">
+                <option value="12">12</option>
+                <option value="24">24</option>
+                <option value="48">48</option>
+            </select>
+            <span>entries</span>
+        </div>
+    </div>
+</div>
+
+<!-- View Proof Modal -->
+<div id="viewProofModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-receipt"></i> Proof Details</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body" id="proofDetailsBody">
+            <!-- Dynamic content -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Approve Modal -->
+<div id="approveProofModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 450px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-check-circle"></i> Approve Proof</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Approve this purchase proof for <strong id="approveUserName"></strong>?</p>
+            <div class="form-group">
+                <label>Order Amount: <strong id="approveAmount"></strong></label>
+            </div>
+            <div class="form-group">
+                <label>Cashback to Award ($)</label>
+                <input type="number" id="approveCashback" class="form-input" step="0.01" placeholder="Auto-calculated">
+                <small>Leave empty to use system rate</small>
+            </div>
+            <div class="form-group">
+                <label>Admin Notes (optional)</label>
+                <textarea id="approveNotes" class="form-input" rows="2" placeholder="Add any notes..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-primary" id="confirmApproveBtn">Approve & Award Cashback</button>
+        </div>
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div id="rejectProofModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 450px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-times-circle"></i> Reject Proof</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Reject this purchase proof from <strong id="rejectUserName"></strong>?</p>
+            <div class="form-group">
+                <label>Rejection Reason *</label>
+                <textarea id="rejectReason" class="form-input" rows="2" placeholder="Explain why this proof is being rejected..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary modal-cancel">Cancel</button>
+            <button class="btn-danger" id="confirmRejectBtn">Reject Proof</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.proofs-panel {
+    animation: fadeIn 0.3s ease;
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.panel-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.panel-header h2 i {
+    color: #3b82f6;
+    margin-right: 10px;
+}
+.stats-badges {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+.stat-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+.stat-badge.pending { background: rgba(245,158,11,0.2); color: #f59e0b; }
+.stat-badge.approved { background: rgba(16,185,129,0.2); color: #10b981; }
+.stat-badge.rejected { background: rgba(239,68,68,0.2); color: #ef4444; }
+.filters-section {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.filter-group {
+    flex: 1;
+    min-width: 160px;
+}
+.filter-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+.filter-input, .filter-select {
+    width: 100%;
+    padding: 8px 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+.date-range-inputs {
+    display: flex;
+    gap: 6px;
+}
+.filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+.proofs-table th, .proofs-table td {
+    vertical-align: middle;
+    font-size: 0.85rem;
+}
+.proof-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+}
+.status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.status-pending { background: rgba(245,158,11,0.2); color: #f59e0b; }
+.status-approved { background: rgba(16,185,129,0.2); color: #10b981; }
+.status-rejected { background: rgba(239,68,68,0.2); color: #ef4444; }
+.action-buttons {
+    display: flex;
+    gap: 6px;
+}
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+.action-btn.view { color: #3b82f6; }
+.action-btn.approve { color: #10b981; }
+.action-btn.reject { color: #ef4444; }
+.action-btn:hover {
+    background: var(--hover-bg);
+}
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+}
+.per-page-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-secondary);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+@media (max-width: 768px) {
+    .filter-row {
+        flex-direction: column;
+    }
+    .proofs-table th, .proofs-table td {
+        font-size: 0.7rem;
+        padding: 6px 4px;
+    }
+    .proof-thumb {
+        width: 40px;
+        height: 40px;
+    }
+}
+</style>
+
+<script>
+    (function() {
+        // Modal handlers
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+        document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal');
+                if (modal) modal.style.display = 'none';
+            });
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+        });
+
+        // View proof details
+        window.viewProofDetails = function(proofData) {
+            const modal = document.getElementById('viewProofModal');
+            const body = document.getElementById('proofDetailsBody');
+            if (!modal || !body) return;
+            body.innerHTML = `
+                <div style="display: grid; gap: 1rem;">
+                    <div><strong>User:</strong> ${proofData.userName || proofData.userEmail || proofData.userId}</div>
+                    <div><strong>Order ID:</strong> ${proofData.orderId || '—'}</div>
+                    <div><strong>Order Amount:</strong> $${proofData.amount || '0.00'}</div>
+                    <div><strong>Uploaded:</strong> ${new Date(proofData.uploadedAt).toLocaleString()}</div>
+                    <div><strong>Status:</strong> ${proofData.status}</div>
+                    ${proofData.adminNotes ? `<div><strong>Admin Notes:</strong> ${proofData.adminNotes}</div>` : ''}
+                    <div><strong>Proof Image:</strong></div>
+                    <div><img src="${proofData.imageUrl}" alt="Proof" style="max-width:100%; border-radius:8px; border:1px solid var(--border-color);"></div>
+                    ${proofData.productDetails ? `<div><strong>Product Details:</strong><pre style="background:var(--bg-primary); padding:8px; border-radius:8px;">${JSON.stringify(proofData.productDetails, null, 2)}</pre></div>` : ''}
+                </div>
+            `;
+            modal.style.display = 'flex';
+        };
+
+        // Approve proof
+        window.openApproveProofModal = function(proofId, userName, amount) {
+            document.getElementById('confirmApproveBtn').dataset.id = proofId;
+            document.getElementById('approveUserName').innerText = userName;
+            document.getElementById('approveAmount').innerText = `$${amount || '0.00'}`;
+            document.getElementById('approveCashback').value = '';
+            document.getElementById('approveNotes').value = '';
+            document.getElementById('approveProofModal').style.display = 'flex';
+        };
+        document.getElementById('confirmApproveBtn')?.addEventListener('click', () => {
+            const id = document.getElementById('confirmApproveBtn').dataset.id;
+            const cashback = parseFloat(document.getElementById('approveCashback').value) || null;
+            const notes = document.getElementById('approveNotes').value;
+            if (typeof window.approveProof === 'function') {
+                window.approveProof(id, cashback, notes).then(() => closeAllModals());
+            } else {
+                alert('Approve function not implemented in proofs.js');
+                closeAllModals();
+            }
+        });
+
+        // Reject proof
+        window.openRejectProofModal = function(proofId, userName) {
+            document.getElementById('confirmRejectBtn').dataset.id = proofId;
+            document.getElementById('rejectUserName').innerText = userName;
+            document.getElementById('rejectReason').value = '';
+            document.getElementById('rejectProofModal').style.display = 'flex';
+        };
+        document.getElementById('confirmRejectBtn')?.addEventListener('click', () => {
+            const id = document.getElementById('confirmRejectBtn').dataset.id;
+            const reason = document.getElementById('rejectReason').value;
+            if (typeof window.rejectProof === 'function') {
+                window.rejectProof(id, reason).then(() => closeAllModals());
+            } else {
+                alert('Reject function not implemented in proofs.js');
+                closeAllModals();
+            }
+        });
+
+        // Filters
+        const applyBtn = document.getElementById('applyFiltersBtn');
+        const resetBtn = document.getElementById('resetFiltersBtn');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', () => {
+                if (typeof window.filterProofs === 'function') {
+                    window.filterProofs({
+                        status: document.getElementById('statusFilter').value,
+                        searchUser: document.getElementById('searchUser').value,
+                        startDate: document.getElementById('startDate').value,
+                        endDate: document.getElementById('endDate').value
+                    });
+                }
+            });
+        }
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                document.getElementById('statusFilter').value = 'all';
+                document.getElementById('searchUser').value = '';
+                document.getElementById('startDate').value = '';
+                document.getElementById('endDate').value = '';
+                if (typeof window.filterProofs === 'function') window.filterProofs({});
+            });
+        }
+
+        // Pagination
+        const prevPage = document.getElementById('prevPage');
+        const nextPage = document.getElementById('nextPage');
+        const perPage = document.getElementById('perPage');
+        if (prevPage && nextPage && perPage) {
+            prevPage.addEventListener('click', () => {
+                if (typeof window.changeProofsPage === 'function') window.changeProofsPage('prev');
+            });
+            nextPage.addEventListener('click', () => {
+                if (typeof window.changeProofsPage === 'function') window.changeProofsPage('next');
+            });
+            perPage.addEventListener('change', () => {
+                if (typeof window.setProofsPerPage === 'function') window.setProofsPerPage(parseInt(perPage.value));
+            });
+        }
+
+        // Notify panel ready
+        if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('proofsPanelReady'));
+        }
+    })();
+</script>
