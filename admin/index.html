@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin Dashboard | GetUpDeals</title>
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Admin Base Styles -->
+    <link rel="stylesheet" href="./admin-common.css">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+</head>
+<body>
+
+<div id="app"></div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
+
+<!-- Firebase config (from your assets folder) -->
+<script src="../assets/js/firebase-config.js"></script>
+
+<!-- Admin helper scripts (if you need additional utils) -->
+<script src="./admin-auth.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    // ---------- Admin Dashboard Logic (Self-contained, uses Firebase Auth) ----------
+    (function() {
+        // Wait for Firebase to be ready
+        if (!firebase.apps.length) {
+            console.error("Firebase not initialized. Check firebase-config.js path.");
+            return;
+        }
+        
+        const auth = firebase.auth();
+        let currentUser = null;
+        let currentPanel = 'dashboard';
+        let activeScript = null; // track loaded panel script
+        
+        // DOM elements container
+        const appDiv = document.getElementById('app');
+        
+        // Helper: Show login screen
+        function showLoginScreen(errorMsg = '') {
+            appDiv.innerHTML = `
+                <div class="login-container">
+                    <div class="login-card">
+                        <h2><i class="fas fa-shield-alt"></i> Admin Login</h2>
+                        <form id="adminLoginForm">
+                            <div class="input-group">
+                                <input type="email" id="loginEmail" placeholder="Admin Email" required autocomplete="email">
+                            </div>
+                            <div class="input-group">
+                                <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+                            </div>
+                            <button type="submit" class="login-btn">Sign In</button>
+                            <div id="loginError" class="error-msg">${errorMsg}</div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            const form = document.getElementById('adminLoginForm');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const errorDiv = document.getElementById('loginError');
+                
+                try {
+                    const cred = await auth.signInWithEmailAndPassword(email, password);
+                    // optional: verify admin claim or email domain
+                    const user = cred.user;
+                    // You can add custom admin claim check here (requires cloud function)
+                    // For demo: restrict to specific admin email or domain
+                    const allowedAdmins = ['admin@getupdeals.com', 'your-email@example.com']; // change as needed
+                    if (!allowedAdmins.includes(user.email)) {
+                        await auth.signOut();
+                        throw new Error('Unauthorized: Not an admin account.');
+                    }
+                    // Success - will re-render dashboard automatically via onAuthStateChanged
+                } catch (err) {
+                    errorDiv.innerText = err.message || 'Login failed. Check credentials.';
+                }
+            });
+        }
+        
+        // Render admin dashboard layout with sidebar and panel area
+        function renderAdminLayout() {
+            appDiv.innerHTML = `
+                <div class="admin-wrapper">
+                    <aside class="admin-sidebar" id="adminSidebar">
+                        <div class="sidebar-header">
+                            <a href="#" class="logo">GetUpDeals <span style="font-size:0.8rem;">Admin</span></a>
+                        </div>
+                        <nav class="sidebar-nav">
+                            <ul>
+                                <li><a href="#" data-panel="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                                <li><a href="#" data-panel="users"><i class="fas fa-users"></i> Users</a></li>
+                                <li><a href="#" data-panel="withdrawals"><i class="fas fa-money-bill-wave"></i> Withdrawals</a></li>
+                                <li><a href="#" data-panel="cashback"><i class="fas fa-percent"></i> Cashback</a></li>
+                                <li><a href="#" data-panel="proofs"><i class="fas fa-check-circle"></i> Proofs</a></li>
+                                <li><a href="#" data-panel="referrals"><i class="fas fa-link"></i> Referrals</a></li>
+                                <li><a href="#" data-panel="products-manager"><i class="fas fa-boxes"></i> Products Manager</a></li>
+                                <li><a href="#" data-panel="tags"><i class="fas fa-tags"></i> Tags</a></li>
+                                <li><a href="#" data-panel="rewards"><i class="fas fa-gift"></i> Rewards</a></li>
+                                <li><a href="#" data-panel="notifications"><i class="fas fa-bell"></i> Notifications</a></li>
+                                <li><a href="#" data-panel="analytics"><i class="fas fa-chart-line"></i> Analytics</a></li>
+                                <li><a href="#" data-panel="logs"><i class="fas fa-history"></i> Logs</a></li>
+                                <li><a href="#" data-panel="clicklogs"><i class="fas fa-mouse-pointer"></i> Click Logs</a></li>
+                                <li><a href="#" data-panel="settings"><i class="fas fa-cog"></i> Settings</a></li>
+                            </ul>
+                        </nav>
+                    </aside>
+                    <main class="admin-main">
+                        <div class="admin-topbar">
+                            <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+                            <div class="user-info">
+                                <span class="user-email" id="adminUserEmail">${currentUser ? currentUser.email : 'Admin'}</span>
+                                <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                            </div>
+                        </div>
+                        <div class="panel-container" id="panelContainer">
+                            <div class="loader"><div class="spinner"></div></div>
+                        </div>
+                    </main>
+                </div>
+            `;
+            
+            // Sidebar navigation event listeners
+            document.querySelectorAll('[data-panel]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const panel = link.getAttribute('data-panel');
+                    if (panel) loadPanel(panel);
+                    // close mobile sidebar if open
+                    const sidebar = document.getElementById('adminSidebar');
+                    if (sidebar.classList.contains('open')) sidebar.classList.remove('open');
+                });
+            });
+            
+            // Mobile menu toggle
+            const mobileBtn = document.getElementById('mobileMenuBtn');
+            if (mobileBtn) {
+                mobileBtn.addEventListener('click', () => {
+                    document.getElementById('adminSidebar').classList.toggle('open');
+                });
+            }
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                await auth.signOut();
+            });
+            
+            // Load default panel (dashboard)
+            loadPanel(currentPanel);
+        }
+        
+        // Load panel HTML and corresponding JS
+        async function loadPanel(panelName) {
+            if (!panelName) return;
+            currentPanel = panelName;
+            
+            const panelContainer = document.getElementById('panelContainer');
+            if (!panelContainer) return;
+            
+            // Show loading
+            panelContainer.innerHTML = `<div class="loader"><div class="spinner"></div></div>`;
+            
+            // Update active class in sidebar
+            document.querySelectorAll('[data-panel]').forEach(link => {
+                if (link.getAttribute('data-panel') === panelName) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            try {
+                // Fetch panel HTML
+                const response = await fetch(`./panels/${panelName}.html`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const html = await response.text();
+                panelContainer.innerHTML = html;
+                
+                // Remove previously loaded panel script to avoid conflicts
+                if (activeScript && activeScript.parentNode) {
+                    activeScript.parentNode.removeChild(activeScript);
+                }
+                
+                // Load corresponding JS from panel-scripts/
+                const script = document.createElement('script');
+                script.src = `./panel-scripts/${panelName}.js`;
+                script.id = `panel-script-${panelName}`;
+                script.onload = () => {
+                    // Optional: if the script exports an init function, call it
+                    if (typeof window.initPanel === 'function') {
+                        window.initPanel(panelName);
+                    }
+                };
+                script.onerror = () => {
+                    console.warn(`No script found for panel: ${panelName}`);
+                    // Some panels may not have JS, that's fine
+                };
+                document.body.appendChild(script);
+                activeScript = script;
+                
+                // Execute any inline scripts inside the loaded HTML (optional safety)
+                const inlineScripts = panelContainer.querySelectorAll('script:not([src])');
+                inlineScripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    newScript.textContent = oldScript.textContent;
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+                
+            } catch (err) {
+                console.error('Failed to load panel:', err);
+                panelContainer.innerHTML = `<div style="padding:2rem;text-align:center;color:#ef4444;">
+                    <i class="fas fa-exclamation-triangle"></i> Failed to load ${panelName} panel. 
+                    <br>Make sure the file exists at <code>./panels/${panelName}.html</code>
+                </div>`;
+            }
+        }
+        
+        // Listen to auth state
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // Optional: additional admin claim verification
+                const allowed = ['admin@getupdeals.com', 'getupdeals.admin@gmail.com']; // edit as needed
+                if (!allowed.includes(user.email)) {
+                    // If not allowed, sign out and show login with error
+                    await auth.signOut();
+                    showLoginScreen('Access denied: This account is not authorized as admin.');
+                    return;
+                }
+                currentUser = user;
+                renderAdminLayout();
+                // Load the last active panel or dashboard
+                loadPanel(currentPanel);
+            } else {
+                // Not logged in
+                showLoginScreen('');
+                currentUser = null;
+            }
+        });
+        
+        // Expose loadPanel globally for any panel script to use (e.g., refresh)
+        window.admin = { loadPanel };
+    })();
+</script>
+</body>
+</html>
