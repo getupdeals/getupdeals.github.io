@@ -1,0 +1,239 @@
+/* ==========================================================================
+   themes.css – GetUpDeals Theme Variables
+   Orange Theme – Light Mode Only (Fully Expanded)
+   ========================================================================== */
+
+:root {
+    /* -------------------------------------------------------------------------
+       1. PRIMARY & SECONDARY (Orange/Amber)
+       ------------------------------------------------------------------------- */
+    --primary: #f97316;           /* Orange-500 */
+    --primary-dark: #ea580c;      /* Orange-600 */
+    --primary-light: #fb923c;     /* Orange-400 */
+    --primary-lighter: #fed7aa;   /* Orange-200 – for subtle backgrounds */
+    --primary-darkest: #9a3412;   /* Orange-800 */
+
+    --secondary: #f59e0b;         /* Amber-500 */
+    --secondary-dark: #d97706;    /* Amber-600 */
+    --secondary-light: #fbbf24;   /* Amber-400 */
+    --accent: #fbbf24;            /* Yellow-400 */
+    --accent-dark: #f59e0b;       /* Amber-500 */
+
+    /* RGB versions (for rgba() / opacity) */
+    --primary-rgb: 249, 115, 22;
+    --secondary-rgb: 245, 158, 11;
+    --accent-rgb: 251, 191, 36;
+
+    /* -------------------------------------------------------------------------
+       2. ADDITIONAL ACCENT COLORS (Expanded palette)
+       ------------------------------------------------------------------------- */
+    --purple: #8b5cf6;
+    --purple-dark: #7c3aed;
+    --purple-light: #a78bfa;
+    --pink: #ec4899;
+    --pink-dark: #db2777;
+    --pink-light: #f472b6;
+    --teal: #14b8a6;
+    --teal-dark: #0d9488;
+    --teal-light: #5eead4;
+    --indigo: #6366f1;
+    --indigo-dark: #4f46e5;
+    --indigo-light: #818cf8;
+    --cyan: #06b6d4;
+    --cyan-dark: #0891b2;
+    --cyan-light: #67e8f9;
+    --rose: #f43f5e;
+    --rose-dark: #e11d48;
+    --rose-light: #fb7185;
+    --lime: #84cc16;
+    --lime-dark: #65a30d;
+    --lime-light: #befe5c;
+    --emerald: #10b981;
+    --emerald-dark: #059669;
+    --emerald-light: #6ee7b7;
+
+    /* -------------------------------------------------------------------------
+       3. NEUTRAL SCALE (Extended grays)
+       ------------------------------------------------------------------------- */
+    --white: #ffffff;
+    --black: #000000;
+
+    --gray-50:  #f9fafb;
+    --gray-75:  #f5f6f8;   /* Extra light (not in all frameworks) */
+    --gray-100: #f3f4f6;
+    --gray-150: #eef0f2;   /* New */
+    --gray-200: #e5e7eb;
+    --gray-250: #dee0e3;   /* New */
+    --gray-300: #d1d5db;
+    --gray-350: #c4c8cc;   /* New */
+    --gray-400: #9ca3af;
+    --gray-450: #8b939f;   /* New */
+    --gray-500: #6b7280;
+    --gray-550: #5e6570;   /* New */
+    --gray-600: #4b5563;
+    --gray-650: #3f4855;   /* New */
+    --gray-700: #374151;
+    --gray-750: #2d3749;   /* New */
+    --gray-800: #1f2937;
+    --gray-850: #17212b;   /* New */
+    --gray-900: #111827;
+    --gray-950: #0a0f18;   /* New */
+
+    /* -------------------------------------------------------------------------
+       4. SEMANTIC COLORS (Status, UI feedback)
+       ------------------------------------------------------------------------- */
+    --success: #10b981;
+    --success-dark: #059669;
+    --success-light: #d1fae5;
+    --warning: #f59e0b;
+    --warning-dark: #d97706;
+    --warning-light: #fed7aa;
+    --danger: #ef4444;
+    --danger-dark: #dc2626;
+    --danger-light: #fee2e2;
+    --info: #3b82f6;
+    --info-dark: #2563eb;
+    --info-light: #dbeafe;
+
+    /* RGB variants */
+    --success-rgb: 16, 185, 129;
+    --warning-rgb: 245, 158, 11;
+    --danger-rgb: 239, 68, 68;
+    --info-rgb: 59, 130, 246;
+
+    /* -------------------------------------------------------------------------
+       5. COMPONENT-SPECIFIC SEMANTIC TOKENS (Light theme only)
+       ------------------------------------------------------------------------- */
+    --bg-body: var(--white);
+    --bg-surface: var(--white);
+    --bg-surface-alt: var(--gray-50);
+    --bg-card: var(--white);
+    --bg-secondary: var(--gray-100);
+    --bg-tertiary: var(--gray-50);
+    --bg-input: var(--white);
+    --bg-input-disabled: var(--gray-100);
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+
+    --text-primary: var(--gray-900);
+    --text-secondary: var(--gray-600);
+    --text-tertiary: var(--gray-500);
+    --text-muted: var(--gray-400);
+    --text-on-primary: white;
+    --text-on-dark: white;
+    --text-link: var(--primary);
+    --text-link-hover: var(--primary-dark);
+
+    --border-light: var(--gray-200);
+    --border-medium: var(--gray-300);
+    --border-heavy: var(--gray-400);
+    --border-focus: var(--primary);
+    --border-selected: var(--primary);
+
+    /* -------------------------------------------------------------------------
+       6. SHADOWS (Light theme)
+       ------------------------------------------------------------------------- */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-focus: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+
+    /* -------------------------------------------------------------------------
+       7. GRADIENTS (Expanded)
+       ------------------------------------------------------------------------- */
+    --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+    --gradient-accent: linear-gradient(135deg, var(--accent), var(--primary));
+    --gradient-dark: linear-gradient(135deg, var(--gray-800), var(--gray-900));
+    --gradient-purple: linear-gradient(135deg, var(--purple), var(--indigo));
+    --gradient-pink: linear-gradient(135deg, var(--pink), var(--purple));
+    --gradient-teal: linear-gradient(135deg, var(--teal), var(--cyan));
+    --gradient-fire: linear-gradient(135deg, var(--orange), var(--danger));
+    --gradient-sunset: linear-gradient(135deg, var(--rose), var(--orange));
+    --gradient-ocean: linear-gradient(135deg, var(--teal), var(--indigo));
+    --gradient-lime: linear-gradient(135deg, var(--lime), var(--emerald));
+
+    /* -------------------------------------------------------------------------
+       8. PASTEL BACKGROUNDS (Alerts, badges, highlights)
+       ------------------------------------------------------------------------- */
+    --pastel-blue: #dbeafe;
+    --pastel-green: #dcfce7;
+    --pastel-red: #fee2e2;
+    --pastel-yellow: #fef9c3;
+    --pastel-purple: #ede9fe;
+    --pastel-pink: #fce7f3;
+    --pastel-orange: #ffedd5;
+    --pastel-cyan: #cffafe;
+    --pastel-lime: #ecfccb;
+
+    /* -------------------------------------------------------------------------
+       9. Z-INDEX SCALE (Common stacking layers)
+       ------------------------------------------------------------------------- */
+    --z-base: 1;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-header: 300;
+    --z-backdrop: 500;
+    --z-modal: 1000;
+    --z-popover: 1050;
+    --z-toast: 1100;
+    --z-tooltip: 1200;
+
+    /* -------------------------------------------------------------------------
+       10. BREAKPOINTS & LAYOUT
+       ------------------------------------------------------------------------- */
+    --breakpoint-xs: 480px;
+    --breakpoint-sm: 768px;
+    --breakpoint-md: 1024px;
+    --breakpoint-lg: 1280px;
+    --breakpoint-xl: 1536px;
+
+    --container-max-sm: 640px;
+    --container-max-md: 768px;
+    --container-max-lg: 1024px;
+    --container-max-xl: 1280px;
+    --container-max-2xl: 1536px;
+
+    --header-height: 72px;
+    --top-bar-height: 40px;
+
+    /* -------------------------------------------------------------------------
+       11. TRANSITION & EASING
+       ------------------------------------------------------------------------- */
+    --ease-linear: cubic-bezier(0, 0, 1, 1);
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --transition-fast: 150ms var(--ease-out);
+    --transition: 250ms var(--ease-out);
+    --transition-slow: 350ms var(--ease-in-out);
+    --transition-bounce: 400ms var(--ease-bounce);
+
+    /* -------------------------------------------------------------------------
+       12. MISCELLANEOUS
+       ------------------------------------------------------------------------- */
+    --bg-seasonal: linear-gradient(135deg, #ffedd5, #fed7aa);
+    --accent-light: rgba(249, 115, 22, 0.1);
+
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-header: 1030;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+    --z-toast: 1080;
+}
+
+/* ==========================================================================
+   UTILITY CLASSES (optional – can be used directly in components)
+   ========================================================================== */
+
+/* Example: text gradient utilities */
+.text-gradient-primary {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}

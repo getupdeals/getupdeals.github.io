@@ -1,0 +1,333 @@
+/* ==========================================================================
+   critical.css – GetUpDeals
+   Critical above-the-fold styles (header, hero, initial layout)
+   Inline this in <head> for fastest First Contentful Paint (FCP)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. RESET & BOX-SIZING (minimal)
+   -------------------------------------------------------------------------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   2. CRITICAL VARIABLES (only what's needed for above-the-fold)
+   -------------------------------------------------------------------------- */
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #7c3aed;
+    --success: #10b981;
+    --danger: #ef4444;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --white: #ffffff;
+    --black: #000000;
+
+    --radius-sm: 0.25rem;
+    --radius: 0.5rem;
+    --radius-full: 9999px;
+
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2rem;
+
+    --header-height: 72px;
+    --top-bar-height: 40px;
+    --container-max: 1280px;
+    --container-padding: 1.5rem;
+
+    --transition-fast: 150ms ease;
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+
+
+/* --------------------------------------------------------------------------
+   3. BASE BODY & TYPOGRAPHY (minimal)
+   -------------------------------------------------------------------------- */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--gray-700);
+    background-color: var(--white);
+    overflow-x: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   4. TOP BAR (critical)
+   -------------------------------------------------------------------------- */
+.top-bar {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    height: var(--top-bar-height);
+    font-size: 0.875rem;
+    position: relative;
+    z-index: 50;
+}
+.top-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+}
+.deal-alert {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-weight: 500;
+}
+.top-bar-links {
+    display: flex;
+    gap: var(--space-lg);
+}
+.top-bar-links a {
+    color: white;
+    text-decoration: none;
+    opacity: 0.9;
+}
+.affiliate-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+}
+
+/* --------------------------------------------------------------------------
+   5. MAIN HEADER (sticky, critical)
+   -------------------------------------------------------------------------- */
+.main-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    box-shadow: var(--shadow);
+    height: var(--header-height);
+}
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+}
+.logo .brand-name {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: 800;
+    font-size: 1.5rem;
+}
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space);
+}
+.nav-list {
+    display: flex;
+    gap: var(--space);
+    list-style: none;
+}
+.nav-link {
+    padding: var(--space-sm) var(--space);
+    font-weight: 500;
+    color: var(--gray-700);
+    text-decoration: none;
+}
+.nav-link.active {
+    color: var(--primary);
+}
+.search-input {
+    width: 280px;
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-full);
+    background: var(--white);
+}
+.theme-toggle,
+.mobile-menu-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+}
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+}
+.mobile-menu-toggle span {
+    width: 20px;
+    height: 2px;
+    background: var(--gray-700);
+}
+
+/* --------------------------------------------------------------------------
+   6. HERO SECTION (critical)
+   -------------------------------------------------------------------------- */
+.hero-section {
+    padding: 3rem 0;
+    background: linear-gradient(135deg, var(--gray-50) 0%, transparent 100%);
+}
+.hero-section .container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+.hero-title {
+    font-size: 3rem;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: var(--space);
+}
+.hero-subtitle {
+    font-size: 1.125rem;
+    color: var(--gray-600);
+    margin-bottom: 1.5rem;
+}
+.hero-search-box {
+    max-width: 500px;
+}
+#heroSearch {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-full);
+}
+.hero-image img {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   7. CRITICAL UTILITIES (for above-the-fold)
+   -------------------------------------------------------------------------- */
+.container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+}
+.skip-to-content {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    background: var(--primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    z-index: 1000;
+}
+.skip-to-content:focus {
+    top: var(--space);
+}
+
+/* --------------------------------------------------------------------------
+   8. DEALS GRID (initial view, lightweight)
+   -------------------------------------------------------------------------- */
+.deals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+.deal-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-200);
+    text-decoration: none;
+    color: inherit;
+}
+.deal-image {
+    aspect-ratio: 1 / 1;
+    background: var(--gray-100);
+}
+.deal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.deal-content {
+    padding: 0.75rem;
+}
+.deal-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin: 0 0 0.25rem;
+}
+.current-price {
+    font-weight: 700;
+    color: var(--primary);
+}
+.original-price {
+    font-size: 0.75rem;
+    text-decoration: line-through;
+    color: var(--gray-500);
+}
+
+/* --------------------------------------------------------------------------
+   9. MOBILE BREAKPOINT (critical)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    :root {
+        --container-padding: 1rem;
+    }
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    .main-nav {
+        display: none !important;
+    }
+    .hero-section .container {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .hero-image {
+        display: none;
+    }
+    .hero-title {
+        font-size: 2rem;
+    }
+    .deals-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    .top-bar-links {
+        display: none;
+    }
+    .top-bar-content {
+        justify-content: center;
+    }
+}

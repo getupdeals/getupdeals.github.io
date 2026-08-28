@@ -1,0 +1,1402 @@
+/* ==========================================================================
+   blog-post.css – GetUpDeals
+   Blog‑specific styles for "Best T-Shirts Under ₹999"
+   Fully responsive, theme‑aware, no global conflicts
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. BLOG POST LAYOUT (Two‑column)
+   -------------------------------------------------------------------------- */
+.blog-post {
+    background: var(--white);
+}
+
+.post-header {
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+    padding: var(--space-xl) 0 var(--space-lg);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.post-category {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--space);
+}
+
+.post-title {
+    font-size: 2.5rem;
+    margin-bottom: var(--space);
+    line-height: 1.2;
+}
+
+.post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space);
+    font-size: 0.875rem;
+    color: var(--gray-500);
+    margin-bottom: var(--space);
+}
+
+.post-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.post-featured-image {
+    margin-top: var(--space);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.post-featured-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.image-caption {
+    font-size: 0.75rem;
+    text-align: center;
+    margin-top: 0.5rem;
+    color: var(--gray-500);
+}
+
+/* Two‑column content wrapper */
+.content-wrapper {
+    display: flex;
+    gap: var(--space-xl);
+    margin: var(--space-xl) 0;
+}
+
+.main-article {
+    flex: 2;
+    min-width: 0; /* prevents overflow */
+}
+
+.article-sidebar {
+    flex: 1;
+}
+
+/* Responsive: stack on mobile */
+@media (max-width: 768px) {
+    .content-wrapper {
+        flex-direction: column;
+        gap: var(--space-lg);
+    }
+    .post-title {
+        font-size: 1.75rem;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   2. TABLE OF CONTENTS (TOC)
+   -------------------------------------------------------------------------- */
+.table-of-contents {
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    padding: var(--space);
+    margin-bottom: var(--space-lg);
+    border-left: 4px solid var(--primary);
+}
+
+.table-of-contents h3 {
+    margin-top: 0;
+    margin-bottom: var(--space);
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.table-of-contents nav ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.table-of-contents li {
+    margin-bottom: 0.5rem;
+}
+
+.toc-link {
+    color: var(--gray-800);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color var(--transition-fast);
+}
+
+.toc-link:hover,
+.toc-link.active {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   3. PRODUCTS GRID (from deals-loader.js)
+   -------------------------------------------------------------------------- */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space);
+    margin: var(--space-lg) 0;
+}
+
+/* Style the deal cards inside the blog post */
+.products-grid .deal-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
+    border: 1px solid var(--gray-200);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+}
+
+.products-grid .deal-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.products-grid .deal-image {
+    aspect-ratio: 1 / 1;
+    background: var(--gray-100);
+}
+
+.products-grid .deal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition);
+}
+
+.products-grid .deal-card:hover .deal-image img {
+    transform: scale(1.05);
+}
+
+.products-grid .deal-content {
+    padding: var(--space);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.products-grid .deal-title {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    margin: 0;
+    color: var(--gray-900);
+}
+
+.products-grid .deal-pricing {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.products-grid .current-price {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: var(--primary);
+}
+
+.products-grid .original-price {
+    font-size: 0.8125rem;
+    color: var(--gray-500);
+    text-decoration: line-through;
+}
+
+.products-grid .you-save {
+    font-size: 0.75rem;
+    color: var(--success);
+    font-weight: 500;
+}
+
+.products-grid .deal-badges {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    display: flex;
+    gap: 0.25rem;
+    z-index: 1;
+}
+
+.products-grid .deal-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-full);
+    font-size: 0.6875rem;
+    font-weight: 600;
+}
+
+.products-grid .deal-badge.discount {
+    background: var(--danger);
+    color: white;
+}
+
+.products-grid .deal-badge.store {
+    background: var(--gray-800);
+    color: white;
+}
+
+.products-grid .deal-badge.featured {
+    background: var(--accent, #f59e0b);
+    color: white;
+}
+
+.products-grid .deal-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.products-grid .deal-btn {
+    flex: 1;
+    padding: 0.5rem;
+    text-align: center;
+    border-radius: var(--radius);
+    font-weight: 500;
+    font-size: 0.8125rem;
+    transition: background var(--transition-fast);
+}
+
+.products-grid .deal-btn.primary {
+    background: var(--primary);
+    color: white;
+}
+
+.products-grid .deal-btn.primary:hover {
+    background: var(--primary-dark);
+}
+
+.products-grid .deal-btn.secondary {
+    background: var(--gray-100);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+}
+
+/* View all button */
+.view-all-products {
+    text-align: center;
+    margin: var(--space-lg) 0;
+}
+
+.btn-view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-view-all:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* --------------------------------------------------------------------------
+   4. COMPARISON TABLE
+   -------------------------------------------------------------------------- */
+.table-responsive {
+    overflow-x: auto;
+    margin: var(--space-lg) 0;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    background: var(--white);
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 0.75rem;
+    border: 1px solid var(--gray-200);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.comparison-table th {
+    background: var(--gray-100);
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.comparison-table tr:nth-child(even) {
+    background: var(--gray-50);
+}
+
+.comparison-table a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.comparison-table a:hover {
+    text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   5. FABRIC GUIDE (Feature Grid)
+   -------------------------------------------------------------------------- */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--space);
+    margin: var(--space-lg) 0;
+}
+
+.feature-item {
+    display: flex;
+    gap: var(--space);
+    padding: var(--space);
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.feature-content h4 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+}
+
+.feature-content p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--gray-600);
+}
+
+/* Fabric expanded table */
+.fabric-expanded {
+    margin-top: var(--space-lg);
+}
+
+.fabric-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    background: var(--white);
+    margin: var(--space) 0;
+}
+
+.fabric-table th,
+.fabric-table td {
+    padding: 0.75rem;
+    border: 1px solid var(--gray-200);
+    text-align: left;
+}
+
+.fabric-table th {
+    background: var(--gray-100);
+}
+
+/* --------------------------------------------------------------------------
+   6. FIT CARDS
+   -------------------------------------------------------------------------- */
+.fit-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space);
+    margin: var(--space-lg) 0;
+}
+
+.fit-card {
+    flex: 1;
+    min-width: 180px;
+    text-align: center;
+    padding: var(--space);
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+}
+
+.fit-icon {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+}
+
+.fit-card h4 {
+    margin: 0 0 0.5rem;
+}
+
+.fit-card p {
+    font-size: 0.875rem;
+    margin: 0;
+    color: var(--gray-600);
+}
+
+/* --------------------------------------------------------------------------
+   7. CARE TIPS
+   -------------------------------------------------------------------------- */
+.care-tips {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space);
+    margin: var(--space-lg) 0;
+}
+
+.care-tip {
+    text-align: center;
+    padding: var(--space);
+    background: var(--gray-100);
+    border-radius: var(--radius);
+}
+
+.care-tip i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.care-tip h4 {
+    margin: 0 0 0.25rem;
+    font-size: 0.9375rem;
+}
+
+.care-tip p {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--gray-600);
+}
+
+/* --------------------------------------------------------------------------
+   8. SEASONAL ROTATION
+   -------------------------------------------------------------------------- */
+.seasonal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--space);
+    margin: var(--space-lg) 0;
+}
+
+.season-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: var(--space);
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid;
+}
+
+.season-card.summer { border-left-color: #f59e0b; }
+.season-card.monsoon { border-left-color: #3b82f6; }
+.season-card.winter { border-left-color: #06b6d4; }
+.season-card.spring { border-left-color: #10b981; }
+
+.season-icon {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.season-card h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.125rem;
+}
+
+.season-card ul {
+    padding-left: 1.25rem;
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+.season-card li {
+    margin-bottom: 0.25rem;
+}
+
+.pro-tip {
+    font-size: 0.8125rem;
+    background: var(--gray-100);
+    padding: 0.5rem;
+    border-radius: var(--radius);
+    margin-top: 0.5rem;
+}
+
+.seasonal-checklist {
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    padding: var(--space);
+    margin-top: var(--space);
+}
+
+.checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.checklist-grid label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   9. STAIN REMOVAL TABLE
+   -------------------------------------------------------------------------- */
+.stain-table-container {
+    overflow-x: auto;
+    margin: var(--space-lg) 0;
+}
+
+.stain-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    background: var(--white);
+}
+
+.stain-table th,
+.stain-table td {
+    padding: 0.75rem;
+    border: 1px solid var(--gray-200);
+    text-align: left;
+    vertical-align: top;
+}
+
+.stain-table th {
+    background: var(--gray-100);
+    font-weight: 600;
+}
+
+/* Longevity hacks grid */
+.longevity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--space);
+    margin: var(--space-lg) 0;
+}
+
+.hack-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: var(--space);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+}
+
+.hack-card i {
+    font-size: 1.75rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.hack-card h4 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+}
+
+.hack-card p {
+    font-size: 0.8125rem;
+    margin: 0;
+    color: var(--gray-600);
+}
+
+.emergency-kit {
+    background: var(--primary-light, rgba(37, 99, 235, 0.1));
+    border-radius: var(--radius);
+    padding: var(--space);
+    margin-top: var(--space);
+    border: 1px solid var(--primary);
+}
+
+/* --------------------------------------------------------------------------
+   10. OUTFIT IDEAS
+   -------------------------------------------------------------------------- */
+.outfit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space);
+    margin: var(--space-lg) 0;
+}
+
+.outfit-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: var(--space);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+}
+
+.outfit-image-placeholder {
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+    color: var(--gray-500);
+}
+
+.outfit-card h4 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+}
+
+.outfit-card p {
+    font-size: 0.8125rem;
+    margin: 0 0 0.5rem;
+    color: var(--gray-600);
+    text-align: left;
+}
+
+.vibe-tag {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.6875rem;
+    font-weight: 500;
+}
+
+.style-rule {
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    padding: var(--space);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: var(--space);
+}
+
+.style-rule i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+/* --------------------------------------------------------------------------
+   11. QUIZ SECTION
+   -------------------------------------------------------------------------- */
+.quiz-container {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-md);
+    margin: var(--space-xl) 0;
+    border: 1px solid var(--gray-200);
+}
+
+.quiz-step {
+    display: none;
+}
+
+.quiz-step.active {
+    display: block;
+}
+
+.quiz-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space);
+    margin: var(--space-lg) 0;
+}
+
+.quiz-opt {
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    color: var(--gray-800);
+}
+
+.quiz-opt:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.quiz-result {
+    display: none;
+    text-align: center;
+    padding: var(--space-lg);
+    background: linear-gradient(135deg, #e0f2fe, #fae8ff);
+    border-radius: var(--radius-lg);
+    margin-top: var(--space);
+}
+
+.quiz-result.active {
+    display: block;
+}
+
+.quiz-result h3 {
+    margin-bottom: var(--space);
+}
+
+#result-text {
+    font-size: 1.125rem;
+    margin-bottom: var(--space);
+}
+
+.btn-restart {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.btn-restart:hover {
+    background: var(--primary-dark);
+}
+
+.quiz-note {
+    font-size: 0.8125rem;
+    color: var(--gray-500);
+    margin-top: var(--space);
+    text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   12. MISTAKES GRID
+   -------------------------------------------------------------------------- */
+.mistakes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space);
+    margin: var(--space-lg) 0;
+}
+
+.mistake-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: var(--space);
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--danger);
+}
+
+.mistake-icon {
+    font-size: 1.5rem;
+    color: var(--danger);
+    margin-bottom: 0.5rem;
+}
+
+.mistake-card h4 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+}
+
+.mistake-card p {
+    font-size: 0.875rem;
+    margin: 0 0 0.25rem;
+    color: var(--gray-600);
+}
+
+/* --------------------------------------------------------------------------
+   13. FAQ ACCORDION
+   -------------------------------------------------------------------------- */
+.faq-container {
+    margin: var(--space-lg) 0;
+}
+
+.faq-item {
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.faq-question {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: var(--space) 0;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--gray-800);
+    transition: color var(--transition-fast);
+}
+
+.faq-question:hover {
+    color: var(--primary);
+}
+
+.faq-question i {
+    transition: transform var(--transition-fast);
+}
+
+.faq-item.open .faq-question i {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    padding-bottom: var(--space);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--gray-600);
+    display: none;
+}
+
+.faq-item.open .faq-answer {
+    display: block;
+}
+
+/* --------------------------------------------------------------------------
+   14. INFO / TIP BOXES
+   -------------------------------------------------------------------------- */
+.info-box,
+.tip-box {
+    background: var(--gray-100);
+    border-left: 4px solid var(--primary);
+    padding: var(--space);
+    margin: var(--space-lg) 0;
+    display: flex;
+    gap: var(--space);
+    border-radius: var(--radius);
+}
+
+.info-icon {
+    font-size: 1.5rem;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.info-content h4,
+.tip-box h4 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+}
+
+.info-content p,
+.tip-box p {
+    margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   15. SIDEBAR WIDGETS
+   -------------------------------------------------------------------------- */
+.sidebar-widget {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: var(--space);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+}
+
+.widget-title {
+    margin-top: 0;
+    margin-bottom: var(--space);
+    font-size: 1.125rem;
+    border-bottom: 2px solid var(--primary);
+    display: inline-block;
+    padding-bottom: 0.25rem;
+}
+
+.author-widget {
+    text-align: center;
+}
+
+.author-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: var(--space);
+    object-fit: cover;
+}
+
+.author-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--space);
+    margin-top: var(--space);
+}
+
+.stat {
+    font-size: 0.8125rem;
+    color: var(--gray-500);
+}
+
+.related-posts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space);
+}
+
+.related-post {
+    display: flex;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: inherit;
+    align-items: center;
+}
+
+.related-post img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+
+.related-content h5 {
+    margin: 0 0 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.related-content .post-meta {
+    font-size: 0.6875rem;
+    color: var(--gray-500);
+}
+
+.tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag {
+    background: var(--gray-100);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    text-decoration: none;
+    color: var(--gray-800);
+    transition: all var(--transition-fast);
+}
+
+.tag:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.newsletter-widget form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: var(--space);
+}
+
+.newsletter-widget input {
+    flex: 1;
+    min-width: 0; /* prevents flex overflow */
+    padding: 0.5rem;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    background: var(--white);
+    color: var(--gray-900);
+}
+
+.newsletter-widget button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.newsletter-widget button:hover {
+    background: var(--primary-dark);
+}
+
+/* --------------------------------------------------------------------------
+   16. SHARE SECTION
+   -------------------------------------------------------------------------- */
+.share-section {
+    margin: var(--space-xl) 0;
+    padding: var(--space) 0;
+    border-top: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.share-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: var(--space);
+}
+
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: opacity var(--transition-fast);
+    cursor: pointer;
+}
+
+.share-btn.facebook {
+    background: #1877f2;
+    color: white;
+}
+.share-btn.twitter {
+    background: #1da1f2;
+    color: white;
+}
+.share-btn.whatsapp {
+    background: #25d366;
+    color: white;
+}
+.share-btn.pinterest {
+    background: #e60023;
+    color: white;
+}
+.btn-print {
+    background: var(--gray-100);
+    color: var(--gray-800);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    transition: opacity var(--transition-fast);
+}
+
+.share-btn:hover,
+.btn-print:hover {
+    opacity: 0.85;
+}
+
+/* --------------------------------------------------------------------------
+   17. COMMENTS SECTION
+   -------------------------------------------------------------------------- */
+.comments-section {
+    margin-top: var(--space-xl);
+}
+
+.comment-form {
+    background: var(--gray-100);
+    padding: var(--space);
+    border-radius: var(--radius);
+    margin: var(--space-lg) 0;
+}
+
+.form-row {
+    display: flex;
+    gap: var(--space);
+    margin-bottom: var(--space);
+}
+
+.comment-form input,
+.comment-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 0.875rem;
+    background: var(--white);
+    color: var(--gray-900);
+}
+
+.comment-form textarea {
+    resize: vertical;
+    min-height: 100px;
+    margin-bottom: var(--space);
+}
+
+.btn-submit-comment {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background var(--transition-fast);
+}
+
+.btn-submit-comment:hover {
+    background: var(--primary-dark);
+}
+
+.comments-list {
+    margin-top: var(--space-lg);
+}
+
+.comment-item {
+    background: var(--white);
+    padding: var(--space);
+    border-radius: var(--radius);
+    margin-bottom: var(--space);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.comment-header strong {
+    color: var(--gray-800);
+}
+
+.comment-date {
+    font-size: 0.6875rem;
+    color: var(--gray-500);
+}
+
+.comment-body {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+    color: var(--gray-700);
+}
+
+.comment-actions {
+    display: flex;
+    gap: var(--space);
+}
+
+.comment-like {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 0.75rem;
+    cursor: pointer;
+    padding: 0;
+}
+
+.no-comments {
+    text-align: center;
+    color: var(--gray-500);
+    padding: var(--space-lg);
+}
+
+/* --------------------------------------------------------------------------
+   18. BACK TO TOP BUTTON (already in main.css, but ensure visibility)
+   -------------------------------------------------------------------------- */
+.back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition), visibility var(--transition);
+    z-index: 999;
+    box-shadow: var(--shadow-lg);
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.back-to-top:hover {
+    background: var(--primary-dark);
+    transform: translateY(-4px);
+}
+
+/* --------------------------------------------------------------------------
+   19. AFFILIATE DISCLOSURE BOX
+   -------------------------------------------------------------------------- */
+.affiliate-disclosure-box {
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    padding: var(--space);
+    margin: var(--space-lg) 0;
+    font-size: 0.8125rem;
+    color: var(--gray-600);
+    text-align: center;
+    border: 1px solid var(--gray-200);
+}
+
+/* --------------------------------------------------------------------------
+   20. RESPONSIVE OVERRIDES (mobile-first adjustments)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    
+    .products-grid .deal-content {
+        padding: 0.5rem;
+    }
+    
+    .products-grid .deal-title {
+        font-size: 0.8125rem;
+    }
+    
+    .products-grid .current-price {
+        font-size: 0.9375rem;
+    }
+    
+    .products-grid .original-price {
+        font-size: 0.6875rem;
+    }
+    
+    .products-grid .you-save {
+        font-size: 0.6875rem;
+    }
+    
+    .products-grid .deal-actions {
+        display: none; /* hide buttons on very small screens to save space */
+    }
+    
+    .feature-grid,
+    .fit-options,
+    .care-tips,
+    .seasonal-grid,
+    .longevity-grid,
+    .outfit-grid,
+    .mistakes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .share-buttons {
+        justify-content: center;
+    }
+    
+    .back-to-top {
+        bottom: 1rem;
+        right: 1rem;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .comparison-table,
+    .stain-table,
+    .fabric-table {
+        font-size: 0.75rem;
+    }
+    
+    .comparison-table th,
+    .comparison-table td,
+    .stain-table th,
+    .stain-table td,
+    .fabric-table th,
+    .fabric-table td {
+        padding: 0.5rem;
+    }
+
+
+    .newsletter-widget form {
+        flex-direction: column;
+    }
+    .newsletter-widget button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .quiz-options {
+        flex-direction: column;
+    }
+    
+    .quiz-opt {
+        text-align: center;
+    }
+    
+    .share-btn span:not(.fab) {
+        display: none; /* hide text, show only icon on very small screens */
+    }
+    
+    .share-btn {
+        padding: 0.5rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .article-sidebar {
+        flex-basis: 280px;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   21. LOADER & ERROR STATES (for products container)
+   -------------------------------------------------------------------------- */
+#products-container .loader {
+    text-align: center;
+    padding: var(--space-xl);
+    color: var(--gray-500);
+}
+
+#products-container .error-state {
+    text-align: center;
+    padding: var(--space-xl);
+    background: var(--gray-100);
+    border-radius: var(--radius);
+}
+
+#products-container .error-state i {
+    font-size: 3rem;
+    color: var(--danger);
+    margin-bottom: var(--space);
+}
+
+#products-container .no-deals-message {
+    text-align: center;
+    padding: var(--space-xl);
+    color: var(--gray-500);
+}
+
+
+
